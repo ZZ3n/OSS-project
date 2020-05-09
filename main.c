@@ -41,16 +41,16 @@
 
 #define NORMAL 10
 
-// 2���� �迭 ��
+// 2차원 배열 맵
 typedef int MData;
 
-// ����� x,y ��ǥ�� ��� ����
+// 사과의 x,y 좌표와 사과 갯수
 typedef struct _fruitxy {
 	int x;
 	int y;
 	int numOfFruit;
 } FruitPos;
-// snake x,y ��ǥ
+// snake x,y 좌표
 typedef struct _snakexp {
 	int x;
 	int y;
@@ -70,11 +70,11 @@ typedef struct _myqueue {
 	Node * rear;
 	Node * front;
 } MyQueue;
-/*	front�� �ո� ����Ŵ. rear�� �ڸ� ����Ŵ.
-Queue�� �պκ� := �� ����.
+/*	front는 앞를 가리킴. rear는 뒤를 가리킴.
+Queue의 앞부분 := 뱀 꼬리.
 */
 typedef MyQueue Queue;
-// ť�� rear�� front�� ���� NULL�� �ʱ�ȭ��.
+// 큐의 rear와 front를 전부 NULL로 초기화함.
 void QueueInit(Queue * pq) {
 	pq->rear = NULL;
 	pq->front = NULL;
@@ -88,27 +88,27 @@ int isEmpty(Queue * pq) {
 }
 
 /*
-Queue* pq�� ť�� ��ġ�� ����
-SnakePos data �� ���� ��ġ
+Queue* pq는 큐의 위치를 참조
+SnakePos data 는 뱀의 위치
 */
 void Enqueue(Queue * pq, SnakePos data) {
 	Node * newNode = (Node *)malloc(sizeof(Node));
-	// data�� ��ġ�� ����
+	// data의 위치를 저장
 	newNode->data = data;
 	newNode->next = NULL;
-	// ť�� ������ ó���� ���.
+	// 큐에 삽입이 처음인 경우.
 	if (pq->front == NULL) {
 		pq->rear = newNode;
 		pq->front = newNode;
 	}
-	// ť�� �޺κп� ��� �߰�.
+	// 큐의 뒷부분에 노드 추가.
 	else {
 		pq->rear->next = newNode;
 		pq->rear = newNode;
 	}
 }
 /*
-Queue pq�� Dequeue�� ����.
+Queue pq의 Dequeue를 진행.
 */
 SnakePos Dequeue(Queue * pq) {
 	Node * delNode;
@@ -130,18 +130,18 @@ SnakePos Peek(Queue * pq) {
 ///////////////////////////////////////////////////////////////////////////
 
 /*
-_kbhit() �Լ��� Ű���尡 �ԷµǾ����� Ȯ�� �ϴ� �Լ���
-�Է� ������ ���� Ȯ�� �� Ű �Է� ������ true ������ false ��ȯ
-waiting �Լ��� �ƴ϶� �Է��� �ֵ� ���� �ٷ� ��ȯ�ϹǷ�
-( ���� �Է� �Լ��� ���� Ű�� �Է��� Ȯ���Ϸ���
-�Է� �Լ��� ȣ���� �������� ��� ���¿� ���� �Է��� ���� �� ���� ��ٸ��� �ȴ�)
-��ȯ ���� ���� �۾� ���� �����ϴ�
+_kbhit() 함수는 키보드가 입력되었는지 확인 하는 함수로
+입력 버퍼의 내용 확인 해 키 입력 있으면 true 없으면 false 반환
+waiting 함수가 아니라 입력이 있든 없든 바로 반환하므로
+( 만약 입력 함수를 통해 키의 입력을 확인하려고
+입력 함수를 호출한 시점부터 대기 상태에 들어가서 입력이 들어올 때 까지 기다리게 된다)
+반환 값에 따라 작업 진행 가능하다
 
-_getch() �Լ��� scanf_s()�� ����ϰ� �Է� �޴� �Լ��� �� �Լ��� �ٸ� ���� �Է��� Ű������ ������ ȭ�鿡 ��µ��� �ʴ´ٴ� ��
-���� enter key �� ���� �Է� Ȯ���ϴ°� �ƴ϶� Ű�� ���� ���� �Է� ���ۿ� ���� ���� ��.
-_getch()�� ������ ��ȯ�Ѵ�.
+_getch() 함수는 scanf_s()와 비슷하게 입력 받는 함수로 이 함수와 다른 점은 입력한 키보드의 내용이 화면에 출력되지 않는다는 점
+또한 enter key 를 통해 입력 확인하는게 아니라 키를 누를 순간 입력 버퍼에 값이 들어가게 함.
+_getch()는 정수를 반환한다.
 
-_kbhit(), _getch()�� <conio.h> header include��.
+_kbhit(), _getch()는 <conio.h> header include함.
 */
 int getKeyDown(void) {
 	if (_kbhit()) return _getch();
@@ -152,12 +152,12 @@ int getKeyDown(void) {
 
 
 /*
-���ϴ� Ư�� ��ġ�� ����� �ϰ� ���� �� ����ϴ� �Լ�
-SetconsoleCursorPosition()ȣ���Ϸ���  <Windows.h> include.
-GetStdHandle()�� ��ü �ڵ��� ��ȯ�ϴ� �Լ��� �ȿ� �Ķ���ͷ� ������ �����ָ� �ڵ� ���� ��ȯ ��.
-- ���ڷ� STD_OUTPUT_HANDLE�� �ָ� ǥ���ܼ������ �ڵ� ��ȯ.
-SetconsoleCursorPosition()�� ù ���ڷ� �ڵ� ���� �ְ� �� ��° ���ڿ��� ��ġ ���� �ָ�
-������ ��ġ�� Ŀ���� �̵��Ѵ�.
+원하는 특정 위치에 출력을 하고 싶을 때 사용하는 함수
+SetconsoleCursorPosition()호출하려면  <Windows.h> include.
+GetStdHandle()는 실체 핸들을 반환하는 함수로 안에 파라미터로 종류를 정해주면 핸들 값을 반환 함.
+- 인자로 STD_OUTPUT_HANDLE를 주면 표준콘솔출력의 핸들 반환.
+SetconsoleCursorPosition()는 첫 인자로 핸들 값을 주고 두 번째 인자에는 위치 값을 주면
+정해진 위치로 커서가 이동한다.
 */
 void gotoxy(int x, int y) {
 	COORD Pos;
@@ -169,11 +169,11 @@ void gotoxy(int x, int y) {
 
 
 /*
-�ܼ� Ŀ�� ��ü�� ����� �Լ�
-dwSize �� Ŀ���� �β� (1~100,��~�β�)
-bVisible�� �ֿܼ� Ŀ�� ���� ���ο� ���� ����
-SetConsoleCursorInfo()�� ������ �ܼ� ��ũ�� ���ۿ� ���� Ŀ���� ����(�β�,���⿩��)�� �����ϴ� ����
-�Ű����� : �ܼ� ��ũ�� ���ۿ� ���� �ڵ�, CONSOLE_CURSOR_INFO ����ü �ѱ�
+콘솔 커서 자체를 숨기는 함수
+dwSize 는 커서의 두께 (1~100,얇~두껍)
+bVisible는 콘솔에 커서 노출 여부에 대한 변수
+SetConsoleCursorInfo()는 지정된 콘솔 스크린 버퍼에 대해 커서의 형태(두께,노출여부)를 설정하는 역할
+매개변수 : 콘솔 스크린 버퍼에 대한 핸들, CONSOLE_CURSOR_INFO 구조체 넘김
 */
 void hidecursor(void) {
 	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -186,7 +186,7 @@ void hidecursor(void) {
 
 //show start menu
 int drawStartMenu(void) {
-	// SetConsoleTextAttribute()�Լ����� ��� ���Ǵ�  ����ڵ� ����, �ʱ�ȭ
+	// SetConsoleTextAttribute()함수에서 계속 사용되는  출력핸들 선언, 초기화
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hand, 13);
 	gotoxy(DEFAULT_X, DEFAULT_Y);
@@ -208,23 +208,23 @@ int drawStartMenu(void) {
 
 
 	SetConsoleTextAttribute(hand, 14);
-	//  Ű�� 's'�� 't'�� �Է� �� �� ���� ��� �����̸� ǥ���ϰ� �ϵ��� �ϴ� while��
+	//  키값 's'나 't'가 입력 될 때 까지 계속 깜빡이며 표시하게 하도록 하는 while문
 	while (1) {
-		// Ű �Է¹��� �� ���� getKeyDown()�Լ� ȣ���ؼ� keyDown������ ����
+		// 키 입력받을 때 마다 getKeyDown()함수 호출해서 keyDown변수에 저장
 		int keyDown = getKeyDown();
-		// ���� ����
+		// 게임 시작
 		if (keyDown == 's' || keyDown == 'S') {
 			SetConsoleTextAttribute(hand, 7);
 			return TRUE;
 		}
-		// ���� ����
+		// 게임 종료
 		if (keyDown == 't' || keyDown == 'T') {
 			SetConsoleTextAttribute(hand, 7);
 			return FALSE;
 		}
 		/*
-		"-- press 's' to start --" ���ڰ� �����Ÿ��� ��ó�� ǥ�� �ϱ� ���� Sleep()�Լ��� ����
-		���ڿ� ��ĭ�� ������ ��� �Ѵ�.
+		"-- press 's' to start --" 글자가 깜빡거리는 것처럼 표현 하기 위해 Sleep()함수를 쓰며
+		글자와 빈칸을 번갈아 출력 한다.
 		*/
 		gotoxy(DEFAULT_X + 5, DEFAULT_Y + 9);
 		printf("-- press 's' to start --");
@@ -236,10 +236,10 @@ int drawStartMenu(void) {
 
 }
 /*
-SetConsoleTextAttribute(hand, 11); // �ܼ� ��ũ�� ���ۿ� �������� �ؽ�Ʈ���� �Ӽ� �����ϴ� �Լ�
-�Ű����� - ��ũ�� ������ �ڵ�, ���� ���� ���� �������(1~15)
-Sleep()�Լ��� �����ð� ���� �۾��� ���(wait)�ϰ� ���� �� ���.
-�ڵ� https://m.blog.naver.com/sharonichoya/220873844942
+SetConsoleTextAttribute(hand, 11); // 콘솔 스크린 버퍼에 쓰여지는 텍스트들의 속성 설정하는 함수
+매개변수 - 스크린 버퍼의 핸들, 글자 색에 대한 상수숫자(1~15)
+Sleep()함수는 일정시간 동안 작업을 대기(wait)하고 싶을 때 사용.
+핸들 https://m.blog.naver.com/sharonichoya/220873844942
 */
 
 //show stage Menu and score;
@@ -247,12 +247,12 @@ int drawSpeedMenu(int * scoreArr) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	int i;
-	// 'score.txt' ���� �б����� ������ ����, ��������  �����ͺ���
+	// 'score.txt' 파일 읽기위한 포인터 변수, 쓰기위한  포인터변수
 	FILE * rfp, *wfp;
 	int errCode;
 	errCode = fopen_s(&rfp, "score.txt", "r");
 
-	// ������ ���� �� ���� ��� 'score.txt' ������ ���� ���.
+	// 게임을 실행 한 적이 없어서 'score.txt' 파일이 없는 경우.
 	if (rfp == NULL) {
 		errCode = fopen_s(&rfp, "score.txt", "w+");
 		fclose(rfp);
@@ -269,10 +269,10 @@ int drawSpeedMenu(int * scoreArr) {
 	printf("============================================");
 	SetConsoleTextAttribute(hand, 15);
 
-	if (errCode != 0) { // ������ �� ������ �ʾ��� ���.
-						//�� ���� ����
+	if (errCode != 0) { // 파일이 잘 열리지 않았을 경우.
+						//새 파일 생성
 		errCode = fopen_s(&wfp, "score.txt", "w");
-		// �ְ���� �ʱ�ȭ.
+		// 최고기록 초기화.
 		fprintf(wfp, "%d %d %d %d", scoreArr[0], scoreArr[1], scoreArr[2], scoreArr[3]);
 		for (i = 0; i<4; i++) {
 			gotoxy(DEFAULT_X, DEFAULT_Y + (i + 4));
@@ -280,16 +280,16 @@ int drawSpeedMenu(int * scoreArr) {
 		}
 		fclose(wfp);
 	}
-	// Score �о� ��.
+	// Score 읽어 옴.
 	fscanf_s(rfp, "%d %d %d %d", &scoreArr[0], &scoreArr[1], &scoreArr[2], &scoreArr[3]);
 
 	for (i = 0; i<4; i++) {
 		gotoxy(DEFAULT_X, DEFAULT_Y + (i + 4));
 		printf(" Stage [%d] : %d", i + 1, scoreArr[i]);
-	} // �ְ� ���� ���.
+	} // 최고 점수 출력.
 
 	fclose(rfp);
-	//�������� ����
+	//스테이지 선택
 	while (1) {
 		int keyDown = getKeyDown();
 		if (keyDown == '1') {
@@ -319,17 +319,17 @@ int drawSpeedMenu(int * scoreArr) {
 
 }
 
-// HANDLE �� �ü���� ���� ������ ���ҽ��� ������Ʈ�� �����ϱ� ���� 32bit�� ������
-//  GetStdHandle()�� ��ü �ڵ��� ��ȯ�ϴ� �Լ��� �ȿ� �Ķ���ͷ� ������ �����ָ� �ڵ� ���� ��ȯ ��.
-//      - ���ڷ� STD_OUTPUT_HANDLE�� �ָ� ǥ���ܼ������ �ڵ� ��ȯ.
-// HANDLE�� ����ü�� �޸��Ҵ�� �̿� ���� ������ ���ؼ� �Լ�ȣ�⿡ ����ϴ� �Ͱ� ����ϴ�
-// �ٸ� ���� �ü���� ��Ÿ �ý��� ���α׷�ó�� ����ü ������ ������ ���� ���Ϸ��ϰų� ���α׷��ӿ��� �ϰ���
-//    ���α׷��� ȯ���� �����ϱ� ���� ��� �ϴ� ��. ( ���α׷� �Ը� Ŀ���ų� ��������� ���� �۾��� �ϴ� ��� ����)
+// HANDLE 은 운영체제에 의해 생성된 리소스나 오브젝트를 제어하기 위한 32bit의 정수값
+//  GetStdHandle()는 실체 핸들을 반환하는 함수로 안에 파라미터로 종류를 정해주면 핸들 값을 반환 함.
+//      - 인자로 STD_OUTPUT_HANDLE를 주면 표준콘솔출력의 핸들 반환.
+// HANDLE은 구조체의 메모리할당과 이에 대한 포인터 구해서 함수호출에 사용하는 것과 비슷하다
+// 다른 점은 운영체제나 기타 시스템 프로그램처럼 구조체 내부의 정보를 공개 안하려하거나 프로그래머에게 일관된
+//    프로그래밍 환경을 제공하기 위해 사용 하는 것. ( 프로그램 규모 커지거나 여러사람이 공동 작업을 하는 경우 좋음)
 
 
 
 //////////////////////////////////////STAGE MAP SETTING////////////////////////////////
-//stageOneInit~ stageFourInit ������ �Լ���  drawMainMap���� �ٷ� ���� �׸� �� �ְ� �̸� WALL�� ���� ������ ������
+//stageOneInit~ stageFourInit 까지의 함수는  drawMainMap에서 바로 맵을 그릴 수 있게 미리 WALL이 생길 공간을 지정함
 void stageClear(MData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i <= MAP_SIZE; i++) {
@@ -338,7 +338,7 @@ void stageClear(MData map[MAP_SIZE][MAP_SIZE]) {
 		}
 	}
 }
-// stage 1�� �� ����� �Լ� <�׸� ��>
+// stage 1의 맵 만드는 함수 <네모 벽>
 void stageOneInit(MData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++) {
@@ -358,7 +358,7 @@ void stageOneInit(MData map[MAP_SIZE][MAP_SIZE]) {
 
 	}
 }
-// stage 2�� �� ����� �Լ� < �׸� ���� �߰��� ��>
+// stage 2의 맵 만드는 함수 < 네모 벽에 중간에 벽>
 void stageTwoInit(MData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i<MAP_SIZE; i++) {
@@ -373,7 +373,7 @@ void stageTwoInit(MData map[MAP_SIZE][MAP_SIZE]) {
 
 	}
 }
-// stage 3�� �� ����� �Լ� < ���� ��>
+// stage 3의 맵 만드는 함수 < 십자 벽>
 void stageThreeInit(MData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i<MAP_SIZE; i++) {
@@ -387,7 +387,7 @@ void stageThreeInit(MData map[MAP_SIZE][MAP_SIZE]) {
 		}
 	}
 }
-// stage 4�� �� ����� �Լ� < ũ�ν� ��>
+// stage 4의 맵 만드는 함수 < 크로스 벽>
 void stageFourinit(MData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i<MAP_SIZE; i++) {
@@ -419,7 +419,7 @@ void drawMainMap(MData map[MAP_SIZE][MAP_SIZE]) {
 		for (j = 0; j<MAP_SIZE; j++) {
 			if (map[i][j] == WALL) {
 				gotoxy(i, j);
-				printf("��");
+				printf("■");
 			}
 			else if (map[i][j] == EMPTY) {
 				gotoxy(i, j);
@@ -460,14 +460,14 @@ int setFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
 			(fp->numOfFruit)++;
 			SetConsoleTextAttribute(hand, 10);
 			gotoxy(i, j);
-			printf("��");
+			printf("★");
 			SetConsoleTextAttribute(hand, 7);
 
 			return 1;
 		}
 	}
 }
-// �Ⱦ��̴� �ڵ�
+// 안쓰이는 코드
 /*
 int setBonusFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
 int i, j, numOfFruit = 0;
@@ -484,30 +484,30 @@ return numOfFruit;
 */
 //
 /*
-�ܼ� (x,y) �� Tail("��") �� �׸�
-�ʿ� ������ ��ġ�� ������.
+콘솔 (x,y) 에 Tail("○") 을 그림
+맵에 꼬리의 위치를 저장함.
 */
 void setSnakeTail(MData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hand, 14);
 	gotoxy(snake_x, snake_y);
-	printf("��");
-	map[snake_x][snake_y] = TAIL; // �ʿ� ������ ��ġ�� ������.
+	printf("○");
+	map[snake_x][snake_y] = TAIL; // 맵에 꼬리의 위치를 저장함.
 	SetConsoleTextAttribute(hand, 7);
 
 }
-// ���� x,y ��ġ�� �׸�.
+// 뱀을 x,y 위치에 그림.
 void setSnake(MData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	gotoxy(snake_x, snake_y);
 	SetConsoleTextAttribute(hand, 14);
-	printf("��");
+	printf("●");
 	SetConsoleTextAttribute(hand, 7);
 	map[snake_x][snake_y] = HEAD;
 }
 /*
-x,y�� " "�� �־ ������ �ֿܼ��� ������� �ʰ� ��.
-map���� x,y �κ��� EMPTY �� �ʱ�ȭ.
+x,y에 " "를 넣어서 꼬리를 콘솔에서 출력하지 않게 함.
+map에서 x,y 부분을 EMPTY 로 초기화.
 */
 void removeSnake(MData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
 	gotoxy(snake_x, snake_y);
@@ -647,7 +647,7 @@ int overlap(int savedKey, int key) {
 
 	return FALSE;
 }
-// sp�� fp �ܼ� �񱳷� �浹 üũ
+// sp와 fp 단순 비교로 충돌 체크
 int colWithFruit(SnakePos * sp, FruitPos * fp) {
 	//meet;->x == fp->x
 	if ((sp->x == fp->x && sp->y == fp->y)) {
@@ -655,7 +655,7 @@ int colWithFruit(SnakePos * sp, FruitPos * fp) {
 	}
 	return FALSE;
 }
-/*	savedKey�� COLLISION���� �����Ǿ��ִ��� üũ
+/*	savedKey가 COLLISION으로 설정되어있는지 체크
 if (state == COLLISION) return TRUE;
 */
 int isCollision(int state) {
@@ -663,7 +663,7 @@ int isCollision(int state) {
 	return FALSE;
 }
 /*
-���������� �ְ������� ����ϰ�, Queue�� ���� ����.
+스테이지별 최고점수를 기록하고, Queue를 전부 지움.
 */
 void GameOver(int score, int best, Queue *pq, int stage, int * scoreArr) {
 	FILE * wfp;
@@ -687,7 +687,7 @@ void GameOver(int score, int best, Queue *pq, int stage, int * scoreArr) {
 	printf("\n");
 	SetConsoleTextAttribute(hand, 7);
 
-	while (!isEmpty(pq)) { // ť�� ���� ����.
+	while (!isEmpty(pq)) { // 큐를 전부 삭제.
 		Dequeue(pq);
 	}
 }
@@ -705,7 +705,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 	FruitPos fruit;
 	fruit.numOfFruit = 0;
 
-	// ���õ� ���� �׸�.
+	// 선택된 맵을 그림.
 	if (stage == 1) {
 		stageOneInit(map);
 	}
@@ -723,7 +723,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 	setSnake(map, snake.x, snake.y);
 
 	while (1) {
-		//ȭ�� ���� �ӵ�
+		//화면 갱신 속도
 		Sleep(1000 / (DWORD)NORMAL);
 		// draw fruit
 		if (fruit.numOfFruit == 0) {
@@ -731,53 +731,53 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 		}
 		drawSubMap(score, best, stage);
 
-		//���ϰ� ���� �浹
+		//과일과 뱀의 충돌
 		if (colWithFruit(&snake, &fruit) == TRUE) {
-			(fruit.numOfFruit)--; //���� ����.
-			time = FALSE;	// ���� ����.
-			score += 5; // ���� + .
+			(fruit.numOfFruit)--; //갯수 줄임.
+			time = FALSE;	// 변수 설정.
+			score += 5; // 점수 + .
 		}
-		//Ű ���� ��
+		//키 누를 시
 		if (_kbhit()) {
-			//Ű �Է¹���
+			//키 입력받음
 			key = _getch();
-			//���� ����
+			//게임 종료
 			if (key == 't' || key == 'T') {
 				return;
 			}
-			//���� ����.
+			//게임 멈춤.
 			if (key == 'p' || key == 'P') {
 
 				system("pause");
-				//	'�ƹ�Ű�� �����ÿ�' ����.
+				//	'아무키나 누르시오' 지움.
 				gotoxy(DEFAULT_X, MAP_SIZE + 6);
 				printf("                                            ");
 				gotoxy(DEFAULT_X, DEFAULT_Y);
 			}
-			// Ű ���� ����Ű�̸�
+			// 키 값이 방향키이면
 			if (key == 224 || key == 0) {
-				//���� �Է¹���.
+				//방향 입력받음.
 				key = _getch();
-				// ���� ����� �ݴ��Ͻ� �����ϰ�, Ű �� ����.
+				// 이전 방향과 반대일시 무시하고, 키 값 저장.
 				if (overlap(savedKey, key) == TRUE) {
 					key = savedKey;
 				}
-				// �Ӹ��� ������ ���̴� �Ӹ��κ��� ������.
+				// 머리는 움직일 것이니 머리부분을 저장함.
 				snakeSecond = snake;
 				savedKey = moveSnakeHead(map, &snake, key);
-				// ť�� ��Ӹ����� ��ġ�� ����.
+				// 큐에 뱀머리였던 위치를 넣음.
 				Enqueue(&queue, snakeSecond);
-				setSnakeTail(map, snakeSecond.x, snakeSecond.y); // �ֿܼ� ���� �׸���, �ʿ� ����.
-				if (time == TRUE) {	// ������ �������ߴٸ�,
-					snakeTail = Dequeue(&queue); //�� ������ ������ Dequeue
-					removeSnake(map, snakeTail.x, snakeTail.y); // map�� console�� �� ���� ����.
+				setSnakeTail(map, snakeSecond.x, snakeSecond.y); // 콘솔에 뱀을 그리고, 맵에 저장.
+				if (time == TRUE) {	// 과일을 먹지못했다면,
+					snakeTail = Dequeue(&queue); //뱀 꼬리의 데이터 Dequeue
+					removeSnake(map, snakeTail.x, snakeTail.y); // map과 console에 뱀 꼬리 삭제.
 				}
-				else {	//������ �Ծ��ٸ�, ( �� ������ ������ ����. )
+				else {	//과일을 먹었다면, ( 뱀 꼬리를 지우지 않음. )
 					time = TRUE;
 				}
 
-				if (isCollision(savedKey)) { // �浹 ���� üũ.
-					GameOver(score, best, &queue, stage, scoreArr); // ���� ����
+				if (isCollision(savedKey)) { // 충돌 변수 체크.
+					GameOver(score, best, &queue, stage, scoreArr); // 게임 오버
 					return;
 				}
 			}
@@ -785,19 +785,19 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 		else {
 			snakeSecond = snake;
 			savedKey = moveSnakeHead(map, &snake, savedKey);
-			Enqueue(&queue, snakeSecond); // ť�� ��Ӹ����� ��ġ�� ����.
+			Enqueue(&queue, snakeSecond); // 큐에 뱀머리였던 위치를 넣음.
 			setSnakeTail(map, snakeSecond.x, snakeSecond.y);
 
-			// ������ �������ߴٸ�,
+			// 과일을 먹지못했다면,
 			if (time == TRUE) {
 				snakeTail = Dequeue(&queue);
 				removeSnake(map, snakeTail.x, snakeTail.y);
 			}
-			//������ �Ծ��ٸ�, ( �� ������ ������ ����. )
+			//과일을 먹었다면, ( 뱀 꼬리를 지우지 않음. )
 			else {
 				time = TRUE;
 			}
-			// �浹 ���� üũ. ���� ����
+			// 충돌 변수 체크. 게임 오버
 			if (isCollision(savedKey)) {
 				GameOver(score, best, &queue, stage, scoreArr);
 				return;
@@ -808,19 +808,19 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 }
 
 int main(void) {
-	// ���� map������ ������ ���� 2���� �迭
+	// 게임 map정보를 가지기 위한 2차원 배열
 	MData map[MAP_SIZE][MAP_SIZE];
-	// console ��� �� ����
+	// console 배경 색 설정
 	system("color 7");
 	hidecursor();
-	// �������� ���� ����Ű ���� ����.
+	// 스테이지 선택 저장키 위한 변수.
 	int stage;
-	// �� stage �ְ� ��� ���� �迭
+	// 각 stage 최고 기록 저장 배열
 	int scoreArr[4] = { 0 };
 	while (1) {
 		system("mode con: cols=44 lines=30");   //console size
 		if (drawStartMenu() == FALSE) break;
-		// �ܼ� ȭ�� �ʱ�ȭ
+		// 콘솔 화면 초기화
 		system("cls");
 		stage = drawSpeedMenu(scoreArr);
 		system("cls");
