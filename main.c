@@ -419,7 +419,8 @@ void drawMainMap(MData map[MAP_SIZE][MAP_SIZE]) {
 		for (j = 0; j<MAP_SIZE; j++) {
 			if (map[i][j] == WALL) {
 				gotoxy(i, j);
-				printf("■");
+				//print ■
+				printf("\u25A0");
 			}
 			else if (map[i][j] == EMPTY) {
 				gotoxy(i, j);
@@ -460,7 +461,8 @@ int setFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
 			(fp->numOfFruit)++;
 			SetConsoleTextAttribute(hand, 10);
 			gotoxy(i, j);
-			printf("★");
+			//print ★
+			printf("\u2605");
 			SetConsoleTextAttribute(hand, 7);
 
 			return 1;
@@ -491,7 +493,8 @@ void setSnakeTail(MData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hand, 14);
 	gotoxy(snake_x, snake_y);
-	printf("○");
+	//print ○
+	printf("\u25CB");
 	map[snake_x][snake_y] = TAIL; // 맵에 꼬리의 위치를 저장함.
 	SetConsoleTextAttribute(hand, 7);
 
@@ -501,7 +504,8 @@ void setSnake(MData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	gotoxy(snake_x, snake_y);
 	SetConsoleTextAttribute(hand, 14);
-	printf("●");
+	//print ●
+	printf("\u25CF");
 	SetConsoleTextAttribute(hand, 7);
 	map[snake_x][snake_y] = HEAD;
 }
