@@ -700,6 +700,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 	int best = scoreArr[stage - 1];
 	int score = 0;
 	int key, savedKey = 0;
+	double repeatTimes = 0;
 	Queue queue;
 	QueueInit(&queue);
 	SnakePos snake = { MAP_SIZE / 4 - 2, MAP_SIZE / 4 + 1 };
@@ -725,11 +726,11 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 
 	drawMainMap(map);
 	setSnake(map, snake.x, snake.y);
-	savedKey = 77; // 초기 방향 설정.
 
 	while (1) {
 		//화면 갱신 속도
 		Sleep(1000 / (DWORD)NORMAL);
+
 		// draw fruit
 		if (fruit.numOfFruit == 0) {
 			setFruit(map, &fruit);
@@ -742,6 +743,15 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 			time = FALSE;	// 변수 설정.
 			score += 5; // 점수 + .
 		}
+
+		// 처음 키 입력을 기다림.
+		while (savedKey == 0) {
+			if (_kbhit() != 0 && _getch() == 224) {
+				savedKey = _getch();
+				break;
+			}
+		}
+
 		//키 누를 시!
 		if (_kbhit() != 0) {
 			//키 입력받음
@@ -810,6 +820,8 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 			}
 
 		}
+
+		repeatTimes++;
 	}
 }
 
