@@ -725,6 +725,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 
 	drawMainMap(map);
 	setSnake(map, snake.x, snake.y);
+	savedKey = 77; // 초기 방향 설정.
 
 	while (1) {
 		//화면 갱신 속도
@@ -741,8 +742,8 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 			time = FALSE;	// 변수 설정.
 			score += 5; // 점수 + .
 		}
-		//키 누를 시
-		if (_kbhit()) {
+		//키 누를 시!
+		if (_kbhit() != 0) {
 			//키 입력받음
 			key = _getch();
 			//게임 종료
@@ -750,7 +751,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 				return;
 			}
 			//게임 멈춤.
-			if (key == 'p' || key == 'P') {
+			else if (key == 'p' || key == 'P') {
 
 				system("pause");
 				//	'아무키나 누르시오' 지움.
@@ -759,7 +760,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 				gotoxy(DEFAULT_X, DEFAULT_Y);
 			}
 			// 키 값이 방향키이면
-			if (key == 224 || key == 0) {
+			else if (key == 224 ) { //?? 0 있는 이유는???
 				//방향 입력받음.
 				key = _getch();
 				// 이전 방향과 반대일시 무시하고, 키 값 저장.
@@ -785,6 +786,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 					return;
 				}
 			}
+			
 		}
 		else {
 			snakeSecond = snake;
