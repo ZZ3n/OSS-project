@@ -18,8 +18,8 @@
 > **Debug and Run** : Visual studio 2017
 
 # 4. Author
-> Park jae hyun - 박재현   
-> Choi inn young - 최인영    
+> Park jae hyun - 박재현
+> Choi in young - 최인영    
 > Park chong myeong - 박총명     
   
 # 5. License
