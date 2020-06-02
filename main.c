@@ -789,44 +789,28 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 	FruitPos fruit;
 	fruit.numOfFruit = 0;
 
-	//모드 선택
+	//모드 선택에 따른 스코어 배열 선택
 	if (mode == 1)
 	{
 		best = scoreArr[stage - 1];
-		// 선택된 맵을 그림.
-		if (stage == 1) {
-			stageOneInit(map);
-		}
-		else if (stage == 2) {
-			stageTwoInit(map);
-		}
-		else if (stage == 3) {
-			stageThreeInit(map);
-		}
-		else {
-			stageFourinit(map);
-		}
-
 	}
 	else
 	{
 		best = scoreArr[stage - 1 + 4];
-		// 선택된 맵을 그림.
-		if (stage == 1) {
-			stageOneInit(map);
-		}
-		else if (stage == 2) {
-			stageTwoInit(map);
-		}
-		else if (stage == 3) {
-			stageThreeInit(map);
-		}
-		else {
-			stageFourinit(map);
-		}
-
 	}
-
+	// 선택된 맵을 그림.
+	if (stage == 1) {
+		stageOneInit(map);
+	}
+	else if (stage == 2) {
+		stageTwoInit(map);
+	}
+	else if (stage == 3) {
+		stageThreeInit(map);
+	}
+	else {
+		stageFourinit(map);
+	}
 	drawMainMap(map);
 	setSnake(map, snake.x, snake.y);
 
