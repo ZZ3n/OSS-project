@@ -710,6 +710,9 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 	FruitPos fruit;
 	fruit.numOfFruit = 0;
 
+	double speedtime = 1200;
+	int nrepeat = 0;
+
 	// 선택된 맵을 그림.
 	if (stage == 1) {
 		stageOneInit(map);
@@ -729,7 +732,15 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 
 	while (1) {
 		//화면 갱신 속도
-		Sleep(1000 / (DWORD)NORMAL);
+		Sleep( speedtime / (DWORD)NORMAL);
+		nrepeat++;
+
+		if(speedtime >= 500){
+			if ( ((speedtime/10) * nrepeat) / 1000 >= 15){
+				speedtime -=100;
+				nrepeat = 0;
+			}
+		}
 
 		// draw fruit
 		if (fruit.numOfFruit == 0) {
@@ -796,7 +807,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 					return;
 				}
 			}
-			
+
 		}
 		else {
 			snakeSecond = snake;
