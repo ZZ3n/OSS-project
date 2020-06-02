@@ -244,7 +244,6 @@ Sleep()함수는 일정시간 동안 작업을 대기(wait)하고 싶을 때 사
 
 int drawModeMenu(int *scoreArr)
 {
-	int i;
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	SetConsoleTextAttribute(hand, 11);
@@ -252,16 +251,17 @@ int drawModeMenu(int *scoreArr)
 	printf("============================================");
 	SetConsoleTextAttribute(hand, 14);
 	gotoxy(DEFAULT_X, DEFAULT_Y + 1);
-	printf("================ BEST SCORE ================");
+	printf("================ CHOOSE MODE ================");
 	SetConsoleTextAttribute(hand, 13);
 	gotoxy(DEFAULT_X, DEFAULT_Y + 2);
 	printf("============================================");
 	SetConsoleTextAttribute(hand, 15);
 
-	for (i = 0; i < 2; i++) {
-		gotoxy(DEFAULT_X, DEFAULT_Y + (i + 4));
-		printf(" Mode [%d] ", i + 1);
-	}
+
+	gotoxy(DEFAULT_X, DEFAULT_Y +  4);
+	printf(" Game Mode [%d] ", 1);
+	gotoxy(DEFAULT_X, DEFAULT_Y +  5);
+	printf(" Time Mode [%d] ", 2);
 
 	while (1) {
 		int keyDown = getKeyDown();
@@ -272,15 +272,16 @@ int drawModeMenu(int *scoreArr)
 		if (keyDown == '2') {
 			SetConsoleTextAttribute(hand, 7);
 			return 2;
-			SetConsoleTextAttribute(hand, 14);
-			gotoxy(DEFAULT_X, DEFAULT_Y + 9);
-			printf(">> Choose Mode : 1, 2");
-			Sleep(1000 / 3);
-			gotoxy(DEFAULT_X, DEFAULT_Y + 9);
-			printf(">>                          ");
-			Sleep(1000 / 3);
 		}
+		SetConsoleTextAttribute(hand, 14);
+		gotoxy(DEFAULT_X, DEFAULT_Y + 9);
+		printf(">> Choose Mode : 1, 2");
+		Sleep(1000 / 3);
+		gotoxy(DEFAULT_X, DEFAULT_Y + 9);
+		printf(">>                          ");
+		Sleep(1000 / 3);
 	}
+
 }
 
 //show stage Menu and score;
@@ -738,7 +739,7 @@ void GameOver(int score, int best, Queue *pq, int stage, int * scoreArr) {
 	}
 }
 
-void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
+void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr,int mode) {
 	int best = scoreArr[stage - 1];
 	int score = 0;
 	int key, savedKey = 0;
@@ -752,18 +753,39 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 	FruitPos fruit;
 	fruit.numOfFruit = 0;
 
-	// 선택된 맵을 그림.
-	if (stage == 1) {
-		stageOneInit(map);
+	//모드 선택
+	if (mode == 1)
+	{
+
+		// 선택된 맵을 그림.
+		if (stage == 1) {
+			stageOneInit(map);
+		}
+		else if (stage == 2) {
+			stageTwoInit(map);
+		}
+		else if (stage == 3) {
+			stageThreeInit(map);
+		}
+		else {
+			stageFourinit(map);
+		}
 	}
-	else if (stage == 2) {
-		stageTwoInit(map);
-	}
-	else if (stage == 3) {
-		stageThreeInit(map);
-	}
-	else {
-		stageFourinit(map);
+	else
+	{
+		// 선택된 맵을 그림.
+		if (stage == 1) {
+			stageOneInit(map);
+		}
+		else if (stage == 2) {
+			stageTwoInit(map);
+		}
+		else if (stage == 3) {
+			stageThreeInit(map);
+		}
+		else {
+			stageFourinit(map);
+		}
 	}
 
 	drawMainMap(map);
@@ -874,7 +896,7 @@ int main(void) {
 	system("color 7");
 	hidecursor();
 	//Mode 선택 저장키 위한 변수
-	int Mode;
+	int mode;
 	// 스테이지 선택 저장키 위한 변수.
 	int stage;
 	// 각 stage 최고 기록 저장 배열
@@ -884,11 +906,11 @@ int main(void) {
 		if (drawStartMenu() == FALSE) break;
 		// 콘솔 화면 초기화
 		system("cls");
-		Mode = drawModeMenu(scoreArr);
+		mode = drawModeMenu(scoreArr);
 		system("cls");
 		stage = drawSpeedMenu(scoreArr);
 		system("cls");
-		GameStart(map, stage, scoreArr);
+		GameStart(map, stage, scoreArr,mode);
 		system("pause");
 	}
 	return 0;
