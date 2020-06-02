@@ -242,6 +242,47 @@ Sleep()함수는 일정시간 동안 작업을 대기(wait)하고 싶을 때 사
 핸들 https://m.blog.naver.com/sharonichoya/220873844942
 */
 
+int drawModeMenu(int *scoreArr)
+{
+	int i;
+	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	SetConsoleTextAttribute(hand, 11);
+	gotoxy(DEFAULT_X, DEFAULT_Y);
+	printf("============================================");
+	SetConsoleTextAttribute(hand, 14);
+	gotoxy(DEFAULT_X, DEFAULT_Y + 1);
+	printf("================ BEST SCORE ================");
+	SetConsoleTextAttribute(hand, 13);
+	gotoxy(DEFAULT_X, DEFAULT_Y + 2);
+	printf("============================================");
+	SetConsoleTextAttribute(hand, 15);
+
+	for (i = 0; i < 2; i++) {
+		gotoxy(DEFAULT_X, DEFAULT_Y + (i + 4));
+		printf(" Mode [%d] ", i + 1);
+	}
+
+	while (1) {
+		int keyDown = getKeyDown();
+		if (keyDown == '1') {
+			SetConsoleTextAttribute(hand, 7);
+			return 1;
+		}
+		if (keyDown == '2') {
+			SetConsoleTextAttribute(hand, 7);
+			return 2;
+			SetConsoleTextAttribute(hand, 14);
+			gotoxy(DEFAULT_X, DEFAULT_Y + 9);
+			printf(">> Choose Mode : 1, 2");
+			Sleep(1000 / 3);
+			gotoxy(DEFAULT_X, DEFAULT_Y + 9);
+			printf(">>                          ");
+			Sleep(1000 / 3);
+		}
+	}
+}
+
 //show stage Menu and score;
 int drawSpeedMenu(int * scoreArr) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -274,7 +315,7 @@ int drawSpeedMenu(int * scoreArr) {
 		errCode = fopen_s(&wfp, "score.txt", "w");
 		// 최고기록 초기화.
 		fprintf(wfp, "%d %d %d %d", scoreArr[0], scoreArr[1], scoreArr[2], scoreArr[3]);
-		for (i = 0; i<4; i++) {
+		for (i = 0; i < 4; i++) {
 			gotoxy(DEFAULT_X, DEFAULT_Y + (i + 4));
 			printf(" Stage [%d] : %d", i + 1, scoreArr[i]);
 		}
@@ -283,12 +324,13 @@ int drawSpeedMenu(int * scoreArr) {
 	// Score 읽어 옴.
 	fscanf_s(rfp, "%d %d %d %d", &scoreArr[0], &scoreArr[1], &scoreArr[2], &scoreArr[3]);
 
-	for (i = 0; i<4; i++) {
+	for (i = 0; i < 4; i++) {
 		gotoxy(DEFAULT_X, DEFAULT_Y + (i + 4));
 		printf(" Stage [%d] : %d", i + 1, scoreArr[i]);
 	} // 최고 점수 출력.
 
 	fclose(rfp);
+
 	//스테이지 선택
 	while (1) {
 		int keyDown = getKeyDown();
@@ -361,8 +403,8 @@ void stageOneInit(MData map[MAP_SIZE][MAP_SIZE]) {
 // stage 2의 맵 만드는 함수 < 네모 벽에 중간에 벽>
 void stageTwoInit(MData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
-	for (i = 0; i<MAP_SIZE; i++) {
-		for (j = 0; j<MAP_SIZE; j++) {
+	for (i = 0; i < MAP_SIZE; i++) {
+		for (j = 0; j < MAP_SIZE; j++) {
 			if (i == (int)MAP_SIZE / 2 || j == 0 || j == MAP_SIZE - 1) {
 				map[i][j] = WALL;
 			}
@@ -376,8 +418,8 @@ void stageTwoInit(MData map[MAP_SIZE][MAP_SIZE]) {
 // stage 3의 맵 만드는 함수 < 십자 벽>
 void stageThreeInit(MData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
-	for (i = 0; i<MAP_SIZE; i++) {
-		for (j = 0; j<MAP_SIZE; j++) {
+	for (i = 0; i < MAP_SIZE; i++) {
+		for (j = 0; j < MAP_SIZE; j++) {
 			if (i == MAP_SIZE / 2 || j == MAP_SIZE / 2) {
 				map[i][j] = WALL;
 			}
@@ -390,8 +432,8 @@ void stageThreeInit(MData map[MAP_SIZE][MAP_SIZE]) {
 // stage 4의 맵 만드는 함수 < 크로스 벽>
 void stageFourinit(MData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
-	for (i = 0; i<MAP_SIZE; i++) {
-		for (j = 0; j<MAP_SIZE; j++) {
+	for (i = 0; i < MAP_SIZE; i++) {
+		for (j = 0; j < MAP_SIZE; j++) {
 			if (i == j || i + j == MAP_SIZE - 1) {
 				if (i == MAP_SIZE / 2 - 1 || i == MAP_SIZE / 2)
 					map[i][j] = EMPTY;
@@ -415,8 +457,8 @@ void drawMainMap(MData map[MAP_SIZE][MAP_SIZE]) {
 	SetConsoleTextAttribute(hand, 15);
 
 	int i, j;
-	for (i = 0; i<MAP_SIZE; i++) {
-		for (j = 0; j<MAP_SIZE; j++) {
+	for (i = 0; i < MAP_SIZE; i++) {
+		for (j = 0; j < MAP_SIZE; j++) {
 			if (map[i][j] == WALL) {
 				gotoxy(i, j);
 				//print ■
@@ -770,7 +812,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 				gotoxy(DEFAULT_X, DEFAULT_Y);
 			}
 			// 키 값이 방향키이면
-			else if (key == 224 ) { //?? 0 있는 이유는???
+			else if (key == 224) { //?? 0 있는 이유는???
 				//방향 입력받음.
 				key = _getch();
 				// 이전 방향과 반대일시 무시하고, 키 값 저장.
@@ -796,7 +838,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr) {
 					return;
 				}
 			}
-			
+
 		}
 		else {
 			snakeSecond = snake;
@@ -831,6 +873,8 @@ int main(void) {
 	// console 배경 색 설정
 	system("color 7");
 	hidecursor();
+	//Mode 선택 저장키 위한 변수
+	int Mode;
 	// 스테이지 선택 저장키 위한 변수.
 	int stage;
 	// 각 stage 최고 기록 저장 배열
@@ -839,6 +883,8 @@ int main(void) {
 		system("mode con: cols=44 lines=30");   //console size
 		if (drawStartMenu() == FALSE) break;
 		// 콘솔 화면 초기화
+		system("cls");
+		Mode = drawModeMenu(scoreArr);
 		system("cls");
 		stage = drawSpeedMenu(scoreArr);
 		system("cls");
