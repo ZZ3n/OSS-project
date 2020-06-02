@@ -258,9 +258,9 @@ int drawModeMenu(int *scoreArr)
 	SetConsoleTextAttribute(hand, 15);
 
 
-	gotoxy(DEFAULT_X, DEFAULT_Y +  4);
+	gotoxy(DEFAULT_X, DEFAULT_Y + 4);
 	printf(" Game Mode [%d] ", 1);
-	gotoxy(DEFAULT_X, DEFAULT_Y +  5);
+	gotoxy(DEFAULT_X, DEFAULT_Y + 5);
 	printf(" Time Mode [%d] ", 2);
 
 	while (1) {
@@ -291,6 +291,7 @@ int drawSpeedMenu(int * scoreArr) {
 	int i;
 	// 'score.txt' 파일 읽기위한 포인터 변수, 쓰기위한  포인터변수
 	FILE * rfp, *wfp;
+
 	int errCode;
 	errCode = fopen_s(&rfp, "score.txt", "r");
 
@@ -739,7 +740,8 @@ void GameOver(int score, int best, Queue *pq, int stage, int * scoreArr) {
 	}
 }
 
-void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr,int mode) {
+void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mode) {
+	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	int best = scoreArr[stage - 1];
 	int score = 0;
 	int key, savedKey = 0;
@@ -770,6 +772,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr,int mode
 		else {
 			stageFourinit(map);
 		}
+
 	}
 	else
 	{
@@ -786,6 +789,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr,int mode
 		else {
 			stageFourinit(map);
 		}
+
 	}
 
 	drawMainMap(map);
@@ -862,6 +866,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr,int mode
 			}
 
 		}
+
 		else {
 			snakeSecond = snake;
 			savedKey = moveSnakeHead(map, &snake, savedKey);
@@ -883,6 +888,20 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr,int mode
 				return;
 			}
 
+		}
+		if (mode == 2)
+		{
+			SetConsoleTextAttribute(hand, 15);
+			gotoxy(DEFAULT_X, DEFAULT_Y + 25);
+			printf("%.1lf", (60*2 - repeatTimes*0.1));
+			
+		}
+		if (repeatTimes >= 10 * 10 && mode == 2)
+		{
+			gotoxy(1, 1);
+			printf(" > Time Over ");
+			GameOver(score, best, &queue, stage, scoreArr);
+			return;
 		}
 
 		repeatTimes++;
@@ -910,7 +929,7 @@ int main(void) {
 		system("cls");
 		stage = drawSpeedMenu(scoreArr);
 		system("cls");
-		GameStart(map, stage, scoreArr,mode);
+		GameStart(map, stage, scoreArr, mode);
 		system("pause");
 	}
 	return 0;
