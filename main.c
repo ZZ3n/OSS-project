@@ -931,7 +931,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 			printf("%.1lf", (60*2 - repeatTimes*0.1));
 			
 		}
-		if (repeatTimes >= 10 * 10 && mode == 2)
+		if (repeatTimes >= 10 * 60 * 2 && mode == 2)
 		{
 			gotoxy(1, 1);
 			printf(" > Time Over ");
