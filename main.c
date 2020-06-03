@@ -755,10 +755,10 @@ void GameOver(int mode,int score, int best, Queue *pq, int stage, int * scoreArr
 		}
 	}
 	errCode = fopen_s(&wfp, "score.txt", "w");
-	
+
 	fprintf(wfp, "%d %d %d %d %d %d %d %d", scoreArr[0], scoreArr[1], scoreArr[2], scoreArr[3], scoreArr[4], scoreArr[5], scoreArr[6], scoreArr[7]);
-	
-	
+
+
 	fclose(wfp);
 	SetConsoleTextAttribute(hand, 14);
 	gotoxy(MAP_SIZE / 2 - 4, MAP_SIZE / 2 - 5);
@@ -788,6 +788,8 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 	int time = FALSE;
 	FruitPos fruit;
 	fruit.numOfFruit = 0;
+	double speedtime = 1200;
+	int nrepeat = 0;
 
 	//모드 선택에 따른 스코어 배열 선택
 	if (mode == 1)
@@ -816,7 +818,15 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 
 	while (1) {
 		//화면 갱신 속도
-		Sleep(1000 / (DWORD)NORMAL);
+		Sleep( speedtime / (DWORD)NORMAL);
+		nrepeat++;
+
+		if(speedtime >= 500){
+			if ( ((speedtime/10) * nrepeat) / 1000 >= 15){
+				speedtime -=100;
+				nrepeat = 0;
+			}
+		}
 
 		// draw fruit
 		if (fruit.numOfFruit == 0) {
@@ -913,7 +923,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 			SetConsoleTextAttribute(hand, 15);
 			gotoxy(DEFAULT_X, DEFAULT_Y + 25);
 			printf("%.1lf", (60*2 - repeatTimes*0.1));
-			
+
 		}
 		if (repeatTimes >= 10 * 60 * 2 && mode == 2)
 		{
