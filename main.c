@@ -532,6 +532,48 @@ int setFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
 		}
 	}
 }
+
+int setSpecialFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
+	// i,j >0  &&  i,j < MAP_SIZE-1i
+	HANDLE  hand = GetStdHandle(STD_OUTPUT_HANDLE);
+	int i, j;
+	srand((unsigned int)time(NULL));
+	while (1) {
+		i = rand() % (MAP_SIZE - 2) + 1;
+		j = rand() % (MAP_SIZE - 2) + 1;
+		if (map[i][j] == EMPTY) {
+			map[i][j] = FRUIT;
+			fp->x = i;
+			fp->y = j;
+			(fp->numOfFruit)++;
+			SetConsoleTextAttribute(hand, 12);
+			gotoxy(i, j);
+			//print ★
+			printf("\u2605");
+			SetConsoleTextAttribute(hand, 7);
+
+			return 1;
+		}
+	}
+}
+
+int removeFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
+	HANDLE  hand = GetStdHandle(STD_OUTPUT_HANDLE);
+	int i, j;
+	i = fp->x;
+	j = fp->y;
+
+	if (map[i][j] == FRUIT) {
+		map[i][j] = EMPTY;
+		(fp->numOfFruit)--;
+		SetConsoleTextAttribute(hand, 10);
+		gotoxy(i, j);
+		printf("  ");
+		SetConsoleTextAttribute(hand, 7);
+		return 1;
+	}
+}
+
 // 안쓰이는 코드
 /*
 int setBonusFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
@@ -791,6 +833,9 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 	double speedtime = 1200;
 	int nrepeat = 0;
 
+	int specialfruit = 0; // special fruit exist = 1 , nonexist = 0
+	int specialtime = 0; // special fruit appear time = 1
+
 	//모드 선택에 따른 스코어 배열 선택
 	if (mode == 1)
 	{
@@ -825,10 +870,28 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 			if ( ((speedtime/10) * nrepeat) / 1000 >= 15){
 				speedtime -=100;
 				nrepeat = 0;
+				specialtime = 1;
 			}
 		}
 
 		// draw fruit
+		if(specialtime){ // special fruit apeear time
+			if(specialfruit == 0 ){ // if special fruit nonexist
+				if(fruit.numOfFruit == 1){ // if normal fruit exist
+					removeFruit(map,&fruit); // normal fruit delete
+				}
+				setSpecialFruit(map,&fruit); // make set special fruit
+				specialfruit = 1; //
+			}
+			else{
+				if( (speedtime /10 * nrepeat) > 1000 >= 5){
+					removeFruit(map,&fruit);
+					specialfruit = 0;
+					specialtime = 0;
+				}
+			}
+		}
+
 		if (fruit.numOfFruit == 0) {
 			setFruit(map, &fruit);
 		}
@@ -838,7 +901,15 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 		if (colWithFruit(&snake, &fruit) == TRUE) {
 			(fruit.numOfFruit)--; //갯수 줄임.
 			time = FALSE;	// 변수 설정.
-			score += 5; // 점수 + .
+
+			if(specialfruit){
+				score += 10;
+				specialfruit = 0;
+				specialtime = 0;
+			}
+			else {
+				score += 5; // 점수 + .
+			}
 		}
 
 		// 처음 키 입력을 기다림.
