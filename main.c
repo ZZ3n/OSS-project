@@ -243,9 +243,9 @@ int Map_MenuDrawMode(int *scoreArr)
 
 
 	gotoxy(DEFAULT_X, DEFAULT_Y + 4);
-	printf(" Game Mode [%d] ", 1);
+	printf(" Classic Mode      [%d] ", 1);
 	gotoxy(DEFAULT_X, DEFAULT_Y + 5);
-	printf(" Time Mode [%d] ", 2);
+	printf(" Time Limit Mode   [%d] ", 2);
 
 	while (1) {
 		int keyDown = getKeyDown();
@@ -356,7 +356,7 @@ int Map_MenuDrawStage(int mode,int * scoreArr) {
 //////////////////////////////////////STAGE MAP SETTING////////////////////////////////
 //stageOneInit~ stageFourInit 까지의 함수는  drawMainMap에서 바로 맵을 그릴 수 있게 미리 WALL이 생길 공간을 지정함
 // stage 1의 맵 만드는 함수 <네모 벽>
-void stageOneInit(MapData map[MAP_SIZE][MAP_SIZE]) {
+void Map_GamemapInitStage1(MapData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++) {
 		if (i == 0 || i == MAP_SIZE - 1) {
@@ -375,7 +375,7 @@ void stageOneInit(MapData map[MAP_SIZE][MAP_SIZE]) {
 	}
 }
 // stage 2의 맵 만드는 함수 < 네모 벽에 중간에 벽>
-void stageTwoInit(MapData map[MAP_SIZE][MAP_SIZE]) {
+void Map_GamemapInitStage2(MapData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++) {
 		for (j = 0; j < MAP_SIZE; j++) {
@@ -390,7 +390,7 @@ void stageTwoInit(MapData map[MAP_SIZE][MAP_SIZE]) {
 	}
 }
 // stage 3의 맵 만드는 함수 < 십자 벽>
-void stageThreeInit(MapData map[MAP_SIZE][MAP_SIZE]) {
+void Map_GamemapInitStage3(MapData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++) {
 		for (j = 0; j < MAP_SIZE; j++) {
@@ -404,7 +404,7 @@ void stageThreeInit(MapData map[MAP_SIZE][MAP_SIZE]) {
 	}
 }
 // stage 4의 맵 만드는 함수 < 크로스 벽>
-void stageFourinit(MapData map[MAP_SIZE][MAP_SIZE]) {
+void Map_GamemapInitStage4(MapData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++) {
 		for (j = 0; j < MAP_SIZE; j++) {
@@ -755,76 +755,78 @@ void Game_GameOver(int mode,int score, int best, Queue *pq, int stage, int * sco
 
 void Game_Start(MapData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mode) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
-	int best = 0;
+	int bestScore = 0;
 	int score = 0;
-	int key, savedKey = 0;
-	double repeatTimes = 0;
+	int key, previousKey = 0;
+	unsigned int repeatTimes = 0;
 	Queue queue;
 	QueueInit(&queue);
-	SnakePos snake = { MAP_SIZE / 4 - 2, MAP_SIZE / 4 + 1 };
-	SnakePos snakeSecond;
+	SnakePos snakeHead = { MAP_SIZE / 4 - 2, MAP_SIZE / 4 + 1 };
+	SnakePos snakeNeck;
 	SnakePos snakeTail;
-	int time = FALSE;
+	int removeTail = FALSE;
 	FruitPos fruit;
 	fruit.numOfFruit = 0;
-	double speedtime = 1200;
-	int nrepeat = 0;
-
-	int specialfruit = 0; // special fruit exist = 1 , nonexist = 0
-	int specialtime = 0; // special fruit appear time = 1
+	double refreshInterval = 1200;
+	int innerTimer = 0;
+	// special fruit exist = 1 , nonexist = 0
+	int specialFruit = FALSE; 
+	// special fruit appear time = 1
+	int specialTime = FALSE; 
+	double wholeTime = 120 * 1000;
 
 	//모드 선택에 따른 스코어 배열 선택
 	if (mode == 1)
 	{
-		best = scoreArr[stage - 1];
+		bestScore = scoreArr[stage - 1];
 	}
 	else
 	{
-		best = scoreArr[stage - 1 + 4];
+		bestScore = scoreArr[stage - 1 + 4];
 	}
 	// 선택된 맵을 그림.
 	if (stage == 1) {
-		stageOneInit(map);
+		Map_GamemapInitStage1(map);
 	}
 	else if (stage == 2) {
-		stageTwoInit(map);
+		Map_GamemapInitStage2(map);
 	}
 	else if (stage == 3) {
-		stageThreeInit(map);
+		Map_GamemapInitStage3(map);
 	}
 	else {
-		stageFourinit(map);
+		Map_GamemapInitStage4(map);
 	}
 	Map_GamemapDrawWall(map);
-	Game_PlayDrawHead(map, snake.x, snake.y);
+	Game_PlayDrawHead(map, snakeHead.x, snakeHead.y);
 
 	while (1) {
 		//화면 갱신 속도
-		Sleep( speedtime / (DWORD)NORMAL);
-		nrepeat++;
-
-		if(speedtime >= 500){
-			if ( ((speedtime/10) * nrepeat) / 1000 >= 15){
-				speedtime -=100;
-				nrepeat = 0;
-				specialtime = 1;
+		Sleep( refreshInterval / (DWORD)NORMAL); // 1200 / 10 = 0.12sec
+		innerTimer++;
+		//최소 interval => 500
+		if (refreshInterval >= 500) {
+			if ( (refreshInterval * innerTimer) >= 150000){
+				refreshInterval -= 150;
+				innerTimer = 0;
+				specialTime = TRUE;
 			}
 		}
 
 		// draw fruit
-		if(specialtime){ // special fruit apeear time
-			if(specialfruit == 0 ){ // if special fruit nonexist
-				if(fruit.numOfFruit == 1){ // if normal fruit exist
+		if ( specialTime == TRUE ){ 
+			if ( specialFruit == FALSE ){ // if special fruit nonexist
+				if ( fruit.numOfFruit == 1 ){ // if normal fruit exist
 					Game_RemoveFruit(map,&fruit); // normal fruit delete
 				}
 				Game_DrawSpecial(map,&fruit); // make set special fruit
-				specialfruit = 1; //
+				specialFruit = TRUE; //
 			}
-			else{
-				if( (speedtime /10 * nrepeat) > 1000 >= 5){
+			else {
+				if( (refreshInterval * innerTimer) >= 50000){
 					Game_RemoveFruit(map,&fruit);
-					specialfruit = 0;
-					specialtime = 0;
+					specialFruit = FALSE;
+					specialTime = FALSE;
 				}
 			}
 		}
@@ -832,17 +834,17 @@ void Game_Start(MapData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int 
 		if (fruit.numOfFruit == 0) {
 			Game_DrawFruit(map, &fruit);
 		}
-		Map_GamemapDrawScoreboard(score, best, stage);
+		Map_GamemapDrawScoreboard(score, bestScore, stage);
 
 		//과일과 뱀의 충돌
-		if (isColWithFruit(&snake, &fruit) == TRUE) {
+		if (isColWithFruit(&snakeHead, &fruit) == TRUE) {
 			(fruit.numOfFruit)--; //갯수 줄임.
-			time = FALSE;	// 변수 설정.
+			removeTail = FALSE;	// 변수 설정.
 
-			if(specialfruit){
+			if(specialFruit){
 				score += 10;
-				specialfruit = 0;
-				specialtime = 0;
+				specialFruit = 0;
+				specialTime = 0;
 			}
 			else {
 				score += 5; // 점수 + .
@@ -850,9 +852,10 @@ void Game_Start(MapData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int 
 		}
 
 		// 처음 키 입력을 기다림.
-		while (savedKey == 0) {
+		while (previousKey == 0) {
 			if (_kbhit() != 0 && _getch() == 224) {
-				savedKey = _getch();
+				previousKey = _getch();
+				key = previousKey;
 				break;
 			}
 		}
@@ -879,67 +882,55 @@ void Game_Start(MapData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int 
 				//방향 입력받음.
 				key = _getch();
 				// 이전 방향과 반대일시 무시하고, 키 값 저장.
-				if (isOverlap(savedKey, key) == TRUE) {
-					key = savedKey;
-				}
-				// 머리는 움직일 것이니 머리부분을 저장함.
-				snakeSecond = snake;
-				savedKey = Game_PlayMoveSnake(map, &snake, key);
-				// 큐에 뱀머리였던 위치를 넣음.
-				Enqueue(&queue, snakeSecond);
-				Game_PlayDrawTail(map, snakeSecond.x, snakeSecond.y); // 콘솔에 뱀을 그리고, 맵에 저장.
-				if (time == TRUE) {	// 과일을 먹지못했다면,
-					snakeTail = Dequeue(&queue); //뱀 꼬리의 데이터 Dequeue
-					Game_PlayRemoveTail(map, snakeTail.x, snakeTail.y); // map과 console에 뱀 꼬리 삭제.
-				}
-				else {	//과일을 먹었다면, ( 뱀 꼬리를 지우지 않음. )
-					time = TRUE;
-				}
-
-				if (isCollision(savedKey)) { // 충돌 변수 체크.
-					Game_GameOver(mode,score, best, &queue, stage, scoreArr); // 게임 오버
-					return;
+				if (isOverlap(previousKey, key) == TRUE) {
+					key = previousKey;
 				}
 			}
-
+			else { // not (t,p,arrow)
+				key = previousKey;
+			}
+				
 		}
+		///////////// Snake Move Section
+		
+		// 머리는 움직일 것이니 머리부분을 저장함.
+		snakeNeck = snakeHead;
+		previousKey = Game_PlayMoveSnake(map, &snakeHead, key);
+		Enqueue(&queue, snakeNeck); // 큐에 뱀머리였던 위치를 넣음.
+		Game_PlayDrawTail(map, snakeNeck.x, snakeNeck.y);
 
+		// 과일을 먹지못했다면,
+		if (removeTail == TRUE) {
+			snakeTail = Dequeue(&queue);
+			Game_PlayRemoveTail(map, snakeTail.x, snakeTail.y);
+		}
+		//과일을 먹었다면, ( 뱀 꼬리를 지우지 않음. )
 		else {
-			snakeSecond = snake;
-			savedKey = Game_PlayMoveSnake(map, &snake, savedKey);
-			Enqueue(&queue, snakeSecond); // 큐에 뱀머리였던 위치를 넣음.
-			Game_PlayDrawTail(map, snakeSecond.x, snakeSecond.y);
-
-			// 과일을 먹지못했다면,
-			if (time == TRUE) {
-				snakeTail = Dequeue(&queue);
-				Game_PlayRemoveTail(map, snakeTail.x, snakeTail.y);
-			}
-			//과일을 먹었다면, ( 뱀 꼬리를 지우지 않음. )
-			else {
-				time = TRUE;
-			}
-			// 충돌 변수 체크. 게임 오버
-			if (isCollision(savedKey)) {
-				Game_GameOver(mode,score, best, &queue, stage, scoreArr);
-				return;
-			}
-
+			removeTail = TRUE;
 		}
+		// 충돌 변수 체크. 게임 오버
+		if (isCollision(previousKey)) {
+			Game_GameOver(mode,score, bestScore, &queue, stage, scoreArr);
+			return;
+		}
+
+		//Time limit mode
 		if (mode == 2)
 		{
 			SetConsoleTextAttribute(hand, 15);
 			gotoxy(DEFAULT_X, DEFAULT_Y + 25);
-			printf("%.1lf", (60*2 - repeatTimes*0.1));
+			wholeTime = wholeTime - (refreshInterval / 10);
+			printf("%.1lf", wholeTime / 1000);
 
+			if (wholeTime <= 0.0)
+			{
+				gotoxy(1, 1);
+				printf(" > Time Over ");
+				Game_GameOver(mode, score, bestScore, &queue, stage, scoreArr);
+				return;
+			}
 		}
-		if (repeatTimes >= 10 * 60 * 2 && mode == 2)
-		{
-			gotoxy(1, 1);
-			printf(" > Time Over ");
-			Game_GameOver(mode,score, best, &queue, stage, scoreArr);
-			return;
-		}
+		
 
 		repeatTimes++;
 	}
