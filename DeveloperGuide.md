@@ -13,7 +13,7 @@ Draw inGame
 ### 2. SubCategory List   
 * Map   
     * Menu   
-    * GameMap   
+    * Gamemap   
 * Game    
     * Key     
         Getting keyboard buffer or Setting key variable
