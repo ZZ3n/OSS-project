@@ -1,19 +1,3 @@
-//<V1.0>
-//move snake                    o
-//collision with wall           o
-//collision with itself         o
-//collision with fruit          o
-//read best score from file.    o
-//write best score to file      o
-//what about using Queue ?      o
-//<V2.0>
-//separate tail with head       o
-//added collision
-//map changing                  o
-//<v3.0>
-
-#pragma warning (disable : 4996)
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
@@ -42,7 +26,7 @@
 #define NORMAL 10
 
 // 2차원 배열 맵
-typedef int MData;
+typedef int MapData;
 
 // 사과의 x,y 좌표와 사과 갯수
 typedef struct _fruitxy {
@@ -91,37 +75,37 @@ int isEmpty(Queue * pq) {
 Queue* pq는 큐의 위치를 참조
 SnakePos data 는 뱀의 위치
 */
-void Enqueue(Queue * pq, SnakePos data) {
+void Enqueue(Queue * positionQueue, SnakePos data) {
 	Node * newNode = (Node *)malloc(sizeof(Node));
 	// data의 위치를 저장
 	newNode->data = data;
 	newNode->next = NULL;
 	// 큐에 삽입이 처음인 경우.
-	if (pq->front == NULL) {
-		pq->rear = newNode;
-		pq->front = newNode;
+	if (positionQueue->front == NULL) {
+		positionQueue->rear = newNode;
+		positionQueue->front = newNode;
 	}
 	// 큐의 뒷부분에 노드 추가.
 	else {
-		pq->rear->next = newNode;
-		pq->rear = newNode;
+		positionQueue->rear->next = newNode;
+		positionQueue->rear = newNode;
 	}
 }
 /*
 Queue pq의 Dequeue를 진행.
 */
 SnakePos Dequeue(Queue * pq) {
-	Node * delNode;
-	SnakePos delData = { 0,0 };
+	Node * deletedNode;
+	SnakePos deletedData = { 0,0 };
 	// Queue Empty Check
 	if (isEmpty(pq)) {
-		return delData;
+		return deletedData;
 	}
-	delNode = pq->front;
-	delData = delNode->data;
+	deletedNode = pq->front;
+	deletedData = deletedNode->data;
 	pq->front = pq->front->next;
-	free(delNode);
-	return delData;
+	free(deletedNode);
+	return deletedData;
 }
 
 SnakePos Peek(Queue * pq) {
@@ -185,7 +169,7 @@ void hidecursor(void) {
 
 
 //show start menu
-int drawStartMenu(void) {
+int Map_MenuDrawStart(void) {
 	// SetConsoleTextAttribute()함수에서 계속 사용되는  출력핸들 선언, 초기화
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hand, 13);
@@ -242,7 +226,7 @@ Sleep()함수는 일정시간 동안 작업을 대기(wait)하고 싶을 때 사
 핸들 https://m.blog.naver.com/sharonichoya/220873844942
 */
 
-int drawModeMenu(int *scoreArr)
+int Map_MenuDrawMode(int *scoreArr)
 {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -285,20 +269,20 @@ int drawModeMenu(int *scoreArr)
 }
 
 //show stage Menu and score;
-int drawSpeedMenu(int mode,int * scoreArr) {
+int Map_MenuDrawStage(int mode,int * scoreArr) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
-
 	int i;
 	// 'score.txt' 파일 읽기위한 포인터 변수, 쓰기위한  포인터변수
-	FILE * rfp, *wfp;
+	FILE * readfp, *writefp;
 	int errCode;
-	errCode = fopen_s(&rfp, "score.txt", "r");
+	errCode = fopen_s(&readfp, "score.txt", "r");
 
 	// 게임을 실행 한 적이 없어서 'score.txt' 파일이 없는 경우.
-	if (rfp == NULL) {
-		errCode = fopen_s(&rfp, "score.txt", "w+");
-		fclose(rfp);
-		errCode = fopen_s(&rfp, "score.txt", "r");
+	if (readfp == NULL) {
+		//파일 생성
+		errCode = fopen_s(&readfp, "score.txt", "w+");
+		fclose(readfp);
+		errCode = fopen_s(&readfp, "score.txt", "r");
 	}
 	SetConsoleTextAttribute(hand, 11);
 	gotoxy(DEFAULT_X, DEFAULT_Y);
@@ -310,30 +294,8 @@ int drawSpeedMenu(int mode,int * scoreArr) {
 	gotoxy(DEFAULT_X, DEFAULT_Y + 2);
 	printf("============================================");
 	SetConsoleTextAttribute(hand, 15);
-
-	if (errCode != 0) { // 파일이 잘 열리지 않았을 경우.
-						//새 파일 생성
-		errCode = fopen_s(&wfp, "score.txt", "w");
-		// 최고기록 초기화.
-		fprintf(wfp, "%d %d %d %d %d %d %d %d", scoreArr[0], scoreArr[1], scoreArr[2], scoreArr[3],scoreArr[4], scoreArr[5], scoreArr[6], scoreArr[7]);
-		if (mode == 1)
-		{
-			for (i = 0; i < 4; i++) {
-				gotoxy(DEFAULT_X, DEFAULT_Y + (i + 4));
-				printf(" Stage [%d] : %d", i + 1, scoreArr[i]);
-			}
-		}
-		else
-		{
-			for (i = 0; i < 4; i++) {
-				gotoxy(DEFAULT_X, DEFAULT_Y + (i + 4));
-				printf(" Stage [%d] : %d", i + 1, scoreArr[i+4]);
-			}
-		}
-		fclose(wfp);
-	}
 	// Score 읽어 옴.
-	fscanf_s(rfp, "%d %d %d %d %d %d %d %d", &scoreArr[0], &scoreArr[1], &scoreArr[2], &scoreArr[3], &scoreArr[4], &scoreArr[5], &scoreArr[6], &scoreArr[7]);
+	fscanf_s(readfp, "%d %d %d %d %d %d %d %d", &scoreArr[0], &scoreArr[1], &scoreArr[2], &scoreArr[3], &scoreArr[4], &scoreArr[5], &scoreArr[6], &scoreArr[7]);
 
 	if (mode == 1)
 	{
@@ -350,7 +312,7 @@ int drawSpeedMenu(int mode,int * scoreArr) {
 		}
 	}// 최고 점수 출력.
 
-	fclose(rfp);
+	fclose(readfp);
 
 	//스테이지 선택
 	while (1) {
@@ -393,16 +355,8 @@ int drawSpeedMenu(int mode,int * scoreArr) {
 
 //////////////////////////////////////STAGE MAP SETTING////////////////////////////////
 //stageOneInit~ stageFourInit 까지의 함수는  drawMainMap에서 바로 맵을 그릴 수 있게 미리 WALL이 생길 공간을 지정함
-void stageClear(MData map[MAP_SIZE][MAP_SIZE]) {
-	int i, j;
-	for (i = 0; i <= MAP_SIZE; i++) {
-		for (j = 0; i <= MAP_SIZE; j++) {
-			map[i][j] = EMPTY;
-		}
-	}
-}
 // stage 1의 맵 만드는 함수 <네모 벽>
-void stageOneInit(MData map[MAP_SIZE][MAP_SIZE]) {
+void stageOneInit(MapData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++) {
 		if (i == 0 || i == MAP_SIZE - 1) {
@@ -418,11 +372,10 @@ void stageOneInit(MData map[MAP_SIZE][MAP_SIZE]) {
 					map[i][j] = EMPTY;
 			}
 		}
-
 	}
 }
 // stage 2의 맵 만드는 함수 < 네모 벽에 중간에 벽>
-void stageTwoInit(MData map[MAP_SIZE][MAP_SIZE]) {
+void stageTwoInit(MapData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++) {
 		for (j = 0; j < MAP_SIZE; j++) {
@@ -437,7 +390,7 @@ void stageTwoInit(MData map[MAP_SIZE][MAP_SIZE]) {
 	}
 }
 // stage 3의 맵 만드는 함수 < 십자 벽>
-void stageThreeInit(MData map[MAP_SIZE][MAP_SIZE]) {
+void stageThreeInit(MapData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++) {
 		for (j = 0; j < MAP_SIZE; j++) {
@@ -451,7 +404,7 @@ void stageThreeInit(MData map[MAP_SIZE][MAP_SIZE]) {
 	}
 }
 // stage 4의 맵 만드는 함수 < 크로스 벽>
-void stageFourinit(MData map[MAP_SIZE][MAP_SIZE]) {
+void stageFourinit(MapData map[MAP_SIZE][MAP_SIZE]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++) {
 		for (j = 0; j < MAP_SIZE; j++) {
@@ -473,7 +426,7 @@ void stageFourinit(MData map[MAP_SIZE][MAP_SIZE]) {
 ///////////////////////////////////// D R A W ////////////////////////////////////////
 
 //draw game map
-void drawMainMap(MData map[MAP_SIZE][MAP_SIZE]) {
+void Map_GamemapDrawWall(MapData map[MAP_SIZE][MAP_SIZE]) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hand, 15);
 
@@ -493,7 +446,7 @@ void drawMainMap(MData map[MAP_SIZE][MAP_SIZE]) {
 	}
 	SetConsoleTextAttribute(hand, 7);
 }
-void drawSubMap(int score, int best, int stage) {
+void Map_GamemapDrawScoreboard(int score, int best, int stage) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hand, 15);
 
@@ -509,7 +462,7 @@ void drawSubMap(int score, int best, int stage) {
 }
 /////////////////////////////////////////////////////////////////////////////////////
 
-int setFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
+int Game_DrawFruit(MapData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
 	// i,j >0  &&  i,j < MAP_SIZE-1i
 	HANDLE  hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	int i, j;
@@ -533,7 +486,7 @@ int setFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
 	}
 }
 
-int setSpecialFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
+int Game_DrawSpecial(MapData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
 	// i,j >0  &&  i,j < MAP_SIZE-1i
 	HANDLE  hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	int i, j;
@@ -557,7 +510,7 @@ int setSpecialFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
 	}
 }
 
-int removeFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
+int Game_RemoveFruit(MapData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
 	HANDLE  hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	int i, j;
 	i = fp->x;
@@ -574,27 +527,11 @@ int removeFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
 	}
 }
 
-// 안쓰이는 코드
-/*
-int setBonusFruit(MData map[MAP_SIZE][MAP_SIZE], FruitPos * fp) {
-int i, j, numOfFruit = 0;
-for (i = 0; i<MAP_SIZE - 1; i++) {
-for (j = 0; j<MAP_SIZE; j++) {
-if (map[i][j] == EMPTY) {
-map[i][j] = FRUIT;
-numOfFruit++;
-}
-}
-}
-return numOfFruit;
-}
-*/
-//
 /*
 콘솔 (x,y) 에 Tail("○") 을 그림
 맵에 꼬리의 위치를 저장함.
 */
-void setSnakeTail(MData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
+void Game_PlayDrawTail(MapData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hand, 14);
 	gotoxy(snake_x, snake_y);
@@ -605,7 +542,7 @@ void setSnakeTail(MData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
 
 }
 // 뱀을 x,y 위치에 그림.
-void setSnake(MData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
+void Game_PlayDrawHead(MapData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	gotoxy(snake_x, snake_y);
 	SetConsoleTextAttribute(hand, 14);
@@ -618,13 +555,13 @@ void setSnake(MData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
 x,y에 " "를 넣어서 꼬리를 콘솔에서 출력하지 않게 함.
 map에서 x,y 부분을 EMPTY 로 초기화.
 */
-void removeSnake(MData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
+void Game_PlayRemoveTail(MapData map[MAP_SIZE][MAP_SIZE], int snake_x, int snake_y) {
 	gotoxy(snake_x, snake_y);
 	printf("  ");
 	map[snake_x][snake_y] = EMPTY;
 }
 
-int rotate(int xy, int way) {
+int Game_PlayPredictHead(int xy, int way) {
 	if (way == UP || way == LEFT) {
 		if (xy - 1 == -1) {
 			xy = MAP_SIZE - 1;
@@ -647,55 +584,55 @@ int rotate(int xy, int way) {
 }
 
 
-int colWithTail(MData map[MAP_SIZE][MAP_SIZE], SnakePos * sp, int way) {
+int isColWithTail(MapData map[MAP_SIZE][MAP_SIZE], SnakePos * snakePos, int way) {
 	if (way == UP) {
-		if (map[sp->x][rotate(sp->y, way)] == TAIL)
+		if (map[snakePos->x][Game_PlayPredictHead(snakePos->y, way)] == TAIL)
 			return TRUE;
 	}
 	if (way == DOWN) {
-		if (map[sp->x][rotate(sp->y, way)] == TAIL)
+		if (map[snakePos->x][Game_PlayPredictHead(snakePos->y, way)] == TAIL)
 			return TRUE;
 	}
 	if (way == LEFT) {
-		if (map[rotate(sp->x, way)][sp->y] == TAIL)
+		if (map[Game_PlayPredictHead(snakePos->x, way)][snakePos->y] == TAIL)
 			return TRUE;
 	}
 	if (way == RIGHT) {
-		if (map[rotate(sp->x, way)][sp->y] == TAIL)
+		if (map[Game_PlayPredictHead(snakePos->x, way)][snakePos->y] == TAIL)
 			return TRUE;
 	}
 	return FALSE;
 }
 
-int colWithWall(MData map[MAP_SIZE][MAP_SIZE], SnakePos * sp, int way) {
+int isColWithWall(MapData map[MAP_SIZE][MAP_SIZE], SnakePos * sp, int way) {
 	if (way == UP) {
-		if (map[sp->x][rotate(sp->y, way)] == WALL)
+		if (map[sp->x][Game_PlayPredictHead(sp->y, way)] == WALL)
 			return TRUE;
 	}
 	if (way == DOWN) {
-		if (map[sp->x][rotate(sp->y, way)] == WALL)
+		if (map[sp->x][Game_PlayPredictHead(sp->y, way)] == WALL)
 			return TRUE;
 	}
 	if (way == LEFT) {
-		if (map[rotate(sp->x, way)][sp->y] == WALL)
+		if (map[Game_PlayPredictHead(sp->x, way)][sp->y] == WALL)
 			return TRUE;
 	}
 	if (way == RIGHT) {
-		if (map[rotate(sp->x, way)][sp->y] == WALL)
+		if (map[Game_PlayPredictHead(sp->x, way)][sp->y] == WALL)
 			return TRUE;
 	}
 	return FALSE;
 }
 
 //get snake x, y and move snake
-int moveSnakeHead(MData map[MAP_SIZE][MAP_SIZE], SnakePos * snake, int way) {
-	removeSnake(map, snake->x, snake->y);
-	if (colWithWall(map, snake, way) == TRUE) {
+int Game_PlayMoveSnake(MapData map[MAP_SIZE][MAP_SIZE], SnakePos * snake, int way) {
+	Game_PlayRemoveTail(map, snake->x, snake->y);
+	if (isColWithWall(map, snake, way) == TRUE) {
 		gotoxy(1, 1);
 		printf("> Hit : wall");
 		return COLLISION;
 	}
-	if (colWithTail(map, snake, way) == TRUE) {
+	if (isColWithTail(map, snake, way) == TRUE) {
 		gotoxy(1, 1);
 		printf("> Hit : tail");
 		return COLLISION;
@@ -708,7 +645,7 @@ int moveSnakeHead(MData map[MAP_SIZE][MAP_SIZE], SnakePos * snake, int way) {
 		else {
 			--(snake->y);
 		}
-		setSnake(map, snake->x, (snake->y));
+		Game_PlayDrawHead(map, snake->x, (snake->y));
 		return UP;
 	}
 	if (way == DOWN) {
@@ -718,7 +655,7 @@ int moveSnakeHead(MData map[MAP_SIZE][MAP_SIZE], SnakePos * snake, int way) {
 		else {
 			++(snake->y);
 		}
-		setSnake(map, snake->x, (snake->y));
+		Game_PlayDrawHead(map, snake->x, (snake->y));
 		return DOWN;
 	}
 	if (way == LEFT) {
@@ -728,7 +665,7 @@ int moveSnakeHead(MData map[MAP_SIZE][MAP_SIZE], SnakePos * snake, int way) {
 		else {
 			--(snake->x);
 		}
-		setSnake(map, (snake->x), snake->y);
+		Game_PlayDrawHead(map, (snake->x), snake->y);
 		return LEFT;
 	}
 	if (way == RIGHT) {
@@ -738,13 +675,13 @@ int moveSnakeHead(MData map[MAP_SIZE][MAP_SIZE], SnakePos * snake, int way) {
 		else {
 			++(snake->x);
 		}
-		setSnake(map, snake->x, snake->y);
+		Game_PlayDrawHead(map, snake->x, snake->y);
 		return RIGHT;
 	}
 	return way;
 }
 
-int overlap(int savedKey, int key) {
+int isOverlap(int savedKey, int key) {
 	if (savedKey == UP && key == DOWN)
 		return TRUE;
 	if (savedKey == DOWN && key == UP)
@@ -757,7 +694,7 @@ int overlap(int savedKey, int key) {
 	return FALSE;
 }
 // sp와 fp 단순 비교로 충돌 체크
-int colWithFruit(SnakePos * sp, FruitPos * fp) {
+int isColWithFruit(SnakePos * sp, FruitPos * fp) {
 	//meet;->x == fp->x
 	if ((sp->x == fp->x && sp->y == fp->y)) {
 		return TRUE;
@@ -774,7 +711,7 @@ int isCollision(int state) {
 /*
 스테이지별 최고점수를 기록하고, Queue를 전부 지움.
 */
-void GameOver(int mode,int score, int best, Queue *pq, int stage, int * scoreArr) {
+void Game_GameOver(int mode,int score, int best, Queue *pq, int stage, int * scoreArr) {
 	FILE * wfp;
 	int errCode;
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -816,7 +753,7 @@ void GameOver(int mode,int score, int best, Queue *pq, int stage, int * scoreArr
 	}
 }
 
-void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mode) {
+void Game_Start(MapData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mode) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	int best = 0;
 	int score = 0;
@@ -858,8 +795,8 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 	else {
 		stageFourinit(map);
 	}
-	drawMainMap(map);
-	setSnake(map, snake.x, snake.y);
+	Map_GamemapDrawWall(map);
+	Game_PlayDrawHead(map, snake.x, snake.y);
 
 	while (1) {
 		//화면 갱신 속도
@@ -878,14 +815,14 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 		if(specialtime){ // special fruit apeear time
 			if(specialfruit == 0 ){ // if special fruit nonexist
 				if(fruit.numOfFruit == 1){ // if normal fruit exist
-					removeFruit(map,&fruit); // normal fruit delete
+					Game_RemoveFruit(map,&fruit); // normal fruit delete
 				}
-				setSpecialFruit(map,&fruit); // make set special fruit
+				Game_DrawSpecial(map,&fruit); // make set special fruit
 				specialfruit = 1; //
 			}
 			else{
 				if( (speedtime /10 * nrepeat) > 1000 >= 5){
-					removeFruit(map,&fruit);
+					Game_RemoveFruit(map,&fruit);
 					specialfruit = 0;
 					specialtime = 0;
 				}
@@ -893,12 +830,12 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 		}
 
 		if (fruit.numOfFruit == 0) {
-			setFruit(map, &fruit);
+			Game_DrawFruit(map, &fruit);
 		}
-		drawSubMap(score, best, stage);
+		Map_GamemapDrawScoreboard(score, best, stage);
 
 		//과일과 뱀의 충돌
-		if (colWithFruit(&snake, &fruit) == TRUE) {
+		if (isColWithFruit(&snake, &fruit) == TRUE) {
 			(fruit.numOfFruit)--; //갯수 줄임.
 			time = FALSE;	// 변수 설정.
 
@@ -938,29 +875,29 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 				gotoxy(DEFAULT_X, DEFAULT_Y);
 			}
 			// 키 값이 방향키이면
-			else if (key == 224) { //?? 0 있는 이유는???
+			else if (key == 224) {
 				//방향 입력받음.
 				key = _getch();
 				// 이전 방향과 반대일시 무시하고, 키 값 저장.
-				if (overlap(savedKey, key) == TRUE) {
+				if (isOverlap(savedKey, key) == TRUE) {
 					key = savedKey;
 				}
 				// 머리는 움직일 것이니 머리부분을 저장함.
 				snakeSecond = snake;
-				savedKey = moveSnakeHead(map, &snake, key);
+				savedKey = Game_PlayMoveSnake(map, &snake, key);
 				// 큐에 뱀머리였던 위치를 넣음.
 				Enqueue(&queue, snakeSecond);
-				setSnakeTail(map, snakeSecond.x, snakeSecond.y); // 콘솔에 뱀을 그리고, 맵에 저장.
+				Game_PlayDrawTail(map, snakeSecond.x, snakeSecond.y); // 콘솔에 뱀을 그리고, 맵에 저장.
 				if (time == TRUE) {	// 과일을 먹지못했다면,
 					snakeTail = Dequeue(&queue); //뱀 꼬리의 데이터 Dequeue
-					removeSnake(map, snakeTail.x, snakeTail.y); // map과 console에 뱀 꼬리 삭제.
+					Game_PlayRemoveTail(map, snakeTail.x, snakeTail.y); // map과 console에 뱀 꼬리 삭제.
 				}
 				else {	//과일을 먹었다면, ( 뱀 꼬리를 지우지 않음. )
 					time = TRUE;
 				}
 
 				if (isCollision(savedKey)) { // 충돌 변수 체크.
-					GameOver(mode,score, best, &queue, stage, scoreArr); // 게임 오버
+					Game_GameOver(mode,score, best, &queue, stage, scoreArr); // 게임 오버
 					return;
 				}
 			}
@@ -969,14 +906,14 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 
 		else {
 			snakeSecond = snake;
-			savedKey = moveSnakeHead(map, &snake, savedKey);
+			savedKey = Game_PlayMoveSnake(map, &snake, savedKey);
 			Enqueue(&queue, snakeSecond); // 큐에 뱀머리였던 위치를 넣음.
-			setSnakeTail(map, snakeSecond.x, snakeSecond.y);
+			Game_PlayDrawTail(map, snakeSecond.x, snakeSecond.y);
 
 			// 과일을 먹지못했다면,
 			if (time == TRUE) {
 				snakeTail = Dequeue(&queue);
-				removeSnake(map, snakeTail.x, snakeTail.y);
+				Game_PlayRemoveTail(map, snakeTail.x, snakeTail.y);
 			}
 			//과일을 먹었다면, ( 뱀 꼬리를 지우지 않음. )
 			else {
@@ -984,7 +921,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 			}
 			// 충돌 변수 체크. 게임 오버
 			if (isCollision(savedKey)) {
-				GameOver(mode,score, best, &queue, stage, scoreArr);
+				Game_GameOver(mode,score, best, &queue, stage, scoreArr);
 				return;
 			}
 
@@ -1000,7 +937,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 		{
 			gotoxy(1, 1);
 			printf(" > Time Over ");
-			GameOver(mode,score, best, &queue, stage, scoreArr);
+			Game_GameOver(mode,score, best, &queue, stage, scoreArr);
 			return;
 		}
 
@@ -1010,7 +947,7 @@ void GameStart(MData map[MAP_SIZE][MAP_SIZE], int stage, int * scoreArr, int mod
 
 int main(void) {
 	// 게임 map정보를 가지기 위한 2차원 배열
-	MData map[MAP_SIZE][MAP_SIZE];
+	MapData map[MAP_SIZE][MAP_SIZE];
 	// console 배경 색 설정
 	system("color 7");
 	hidecursor();
@@ -1022,14 +959,14 @@ int main(void) {
 	int scoreArr[8] = { 0 };
 	while (1) {
 		system("mode con: cols=44 lines=30");   //console size
-		if (drawStartMenu() == FALSE) break;
+		if (Map_MenuDrawStart() == FALSE) break;
 		// 콘솔 화면 초기화
 		system("cls");
-		mode = drawModeMenu(scoreArr);
+		mode = Map_MenuDrawMode(scoreArr);
 		system("cls");
-		stage = drawSpeedMenu(mode,scoreArr);
+		stage = Map_MenuDrawStage(mode,scoreArr);
 		system("cls");
-		GameStart(map, stage, scoreArr, mode);
+		Game_Start(map, stage, scoreArr, mode);
 		system("pause");
 	}
 	return 0;
