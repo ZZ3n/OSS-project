@@ -19,15 +19,15 @@
 > **Debug and Run** : Visual studio 2017
 
 ## 4. Contact Information
-> @ZZ3n
->> Park jae hyun - 박재현
->> ndsrhkd@naver.com
-> @innong
->> Choi in young - 최인영
->> inyoung424@gmail.com   
-> @chdaud78
->> Park chong myeong - 박총명
->> qkrri56@naver.com     
+- @ZZ3n
+> Park jae hyun - 박재현
+> ndsrhkd@naver.com
+- @innong
+> Choi in young - 최인영
+> inyoung424@gmail.com   
+- @chdaud78
+> Park chong myeong - 박총명
+> qkrri56@naver.com     
 
 ## 5. License
 **MIT License**
