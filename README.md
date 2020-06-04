@@ -2,21 +2,22 @@
  Snake Game  
  Open Source Software Introduction team 3's Repository
 
+
 ## Project Introduction  
 >Course "Open Source SW introdution" in Sejong University    
 >Half-semester project for studying OSS license and git  
 >Reverse engineering and Refactoring
 
 ## Installation  
-####Download ZIP at ZZ3n github  
+- Download ZIP at ZZ3n github  
 
 OR  
 
-####Clone
-- Clone this repo to your local machine using https://github.com/ZZ3n/OSS-project.git  
-'''bash
-git clone https://github.com/ZZ3n/OSS-project.git
-'''  
+- Clone  
+  -Clone this repo to your local machine using https://github.com/ZZ3n/OSS-project.git  
+   '''bash  
+   git clone https://github.com/ZZ3n/OSS-project.git  
+   '''  
 
 ## Getting Started  
 1. **Clone** or **Downlad** our project.      
