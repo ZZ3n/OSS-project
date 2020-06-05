@@ -2,7 +2,7 @@
 #include "const.h"
 
 int Map_MenuDrawStart(void);
-int Map_MenuDrawMode(int *scoreArr);
+int Map_MenuDrawMode(void);
 int Map_MenuDrawStage(int mode, int * scoreArr);
 
 void Map_GamemapInitStage1(MapData map[22][22]);

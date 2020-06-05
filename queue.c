@@ -2,12 +2,13 @@
 #include "const.h"
 #include "queue.h"
 
-// ť�� rear�� front�� ���� NULL�� �ʱ�ȭ��.
+// Setting value Null
 void QueueInit(Queue * pq) {
 	pq->rear = NULL;
 	pq->front = NULL;
 }
 
+//Queue empty check
 int isEmpty(Queue * pq)
 {
 	if (pq->front == NULL)
@@ -20,18 +21,18 @@ int isEmpty(Queue * pq)
 	}
 }
 
+//Insert snake body into queue
 void Enqueue(Queue * positionQueue, SnakePos data) {
 	Node * newNode = (Node *)malloc(sizeof(Node));
-	// data�� ��ġ�� ����
 	newNode->data = data;
 	newNode->next = NULL;
-	// ť�� ������ ó���� ����.
+	//First enqueue
 	if (positionQueue->front == NULL)
 	{
 		positionQueue->rear = newNode;
 		positionQueue->front = newNode;
 	}
-	// ť�� �޺κп� ���� �߰�.
+	//Insert node into Queue
 	else
 	{
 		positionQueue->rear->next = newNode;
@@ -40,24 +41,26 @@ void Enqueue(Queue * positionQueue, SnakePos data) {
 }
 
 /*
-Queue* pq�� ť�� ��ġ�� ����
-SnakePos data �� ���� ��ġ
+Dequeue snake's tail
 */
-SnakePos Dequeue(Queue * pq) {
+SnakePos Dequeue(Queue * positionQueue) {
 	Node * deletedNode;
 	SnakePos deletedData = { 0,0 };
 	// Queue Empty Check
-	if (isEmpty(pq))
+	if (isEmpty(positionQueue))
 	{
 		return deletedData;
 	}
-	deletedNode = pq->front;
+	deletedNode = positionQueue->front;
 	deletedData = deletedNode->data;
-	pq->front = pq->front->next;
+	positionQueue->front = positionQueue->front->next;
 	free(deletedNode);
 	return deletedData;
 }
 
+/*
+Peek the queue
+*/
 SnakePos Peek(Queue * pq) {
 	return pq->front->data;
 }

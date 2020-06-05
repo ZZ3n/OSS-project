@@ -14,6 +14,9 @@ extern const int LEFT;
 extern const int DOWN;
 extern const int UP;
 
+/*
+Checking collision with tail
+*/
 int isColWithTail(MapData map[22][22], SnakePos * snakePos, int way) {
 	if (way == UP)
 	{
@@ -43,6 +46,9 @@ int isColWithTail(MapData map[22][22], SnakePos * snakePos, int way) {
 	return FALSE;
 }
 
+/*
+Checking collision with wall
+*/
 int isColWithWall(MapData map[22][22], SnakePos * sp, int way) {
 	if (way == UP)
 	{
@@ -75,7 +81,7 @@ int isColWithWall(MapData map[22][22], SnakePos * sp, int way) {
 	return FALSE;
 }
 
-// sp�� fp �ܼ� �񱳷� �浹 üũ
+// Checking collision with fruit
 int isColWithFruit(SnakePos * sp, FruitPos * fp) {
 	//meet;->x == fp->x
 	if ((sp->x == fp->x) && (sp->y == fp->y))
@@ -85,11 +91,12 @@ int isColWithFruit(SnakePos * sp, FruitPos * fp) {
 	return FALSE;
 }
 
-/*	savedKey�� COLLISION���� �����Ǿ��ִ��� üũ
-if (state == COLLISION) return TRUE;
+/*	
+Check collision
+Collision state saved in previousKey
 */
-int isCollision(int state) {
-	if (state == COLLISION)
+int isCollision(int previousKey) {
+	if (previousKey == COLLISION)
 	{
 		return TRUE;
 	}

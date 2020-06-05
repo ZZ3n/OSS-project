@@ -18,34 +18,32 @@ extern const int DOWN;
 extern const int UP;
 
 /*
-�ܼ� (x,y) �� Tail("��") �� �׸�
-�ʿ� ������ ��ġ�� ������.
+Draw tail to (snake_x,snake_y)
 */
 void Game_PlayDrawTail(MapData map[22][22], int snake_x, int snake_y) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hand, 14);
 	gotoxy(snake_x, snake_y);
-	//print ��
+	//print empty circle(O shape)
 	printf("\u25CB");
-	map[snake_x][snake_y] = TAIL; // �ʿ� ������ ��ġ�� ������.
+	map[snake_x][snake_y] = TAIL;
 	SetConsoleTextAttribute(hand, 7);
 
 }
 
-// ���� x,y ��ġ�� �׸�.
+// Draw Head to (snake_x,snake_y)
 void Game_PlayDrawHead(MapData map[22][22], int snake_x, int snake_y) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	gotoxy(snake_x, snake_y);
 	SetConsoleTextAttribute(hand, 14);
-	//print ��
+	//print filled circle
 	printf("\u25CF");
 	SetConsoleTextAttribute(hand, 7);
 	map[snake_x][snake_y] = HEAD;
 }
 
 /*
-x,y�� " "�� �־ ������ �ֿܼ��� �������� �ʰ� ��.
-map���� x,y �κ��� EMPTY �� �ʱ�ȭ.
+Print " " to (snake_x,snake_y)
 */
 void Game_PlayRemoveTail(MapData map[22][22], int snake_x, int snake_y) {
 	gotoxy(snake_x, snake_y);
@@ -53,7 +51,7 @@ void Game_PlayRemoveTail(MapData map[22][22], int snake_x, int snake_y) {
 	map[snake_x][snake_y] = EMPTY;
 }
 
-//get snake x, y and move snake
+//Prepare snake's next position
 int Game_PlayPredictHead(int xy, int way) {
 	if (way == UP || way == LEFT)
 	{
@@ -82,6 +80,9 @@ int Game_PlayPredictHead(int xy, int way) {
 	return FALSE;
 }
 
+/*
+Move snake's head
+*/
 int Game_PlayMoveSnake(MapData map[22][22], SnakePos * snake, int way) {
 	Game_PlayRemoveTail(map, snake->x, snake->y);
 

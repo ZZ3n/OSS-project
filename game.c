@@ -25,18 +25,8 @@ extern const int RED;
 ///////////////////////////////////////////////////////////////////////////
 
 /*
-_kbhit() �Լ��� Ű���尡 �ԷµǾ����� Ȯ�� �ϴ� �Լ���
-�Է� ������ ���� Ȯ�� �� Ű �Է� ������ true ������ false ��ȯ
-waiting �Լ��� �ƴ϶� �Է��� �ֵ� ���� �ٷ� ��ȯ�ϹǷ�
-( ���� �Է� �Լ��� ���� Ű�� �Է��� Ȯ���Ϸ���
-�Է� �Լ��� ȣ���� �������� ���� ���¿� ����� �Է��� ������ �� ���� ���ٸ��� �ȴ�)
-��ȯ ���� ���� �۾� ���� �����ϴ�
-
-_getch() �Լ��� scanf_s()�� �����ϰ� �Է� �޴� �Լ��� �� �Լ��� �ٸ� ���� �Է��� Ű������ ������ ȭ�鿡 ���µ��� �ʴ´ٴ� ��
-���� enter key �� ���� �Է� Ȯ���ϴ°� �ƴ϶� Ű�� ���� ���� �Է� ���ۿ� ���� ����� ��.
-_getch()�� ������ ��ȯ�Ѵ�.
-
-_kbhit(), _getch()�� <conio.h> header include��.
+getKeyDown function is checking keyboard input through _kbhit()
+return value is keyboard input
 */
 int getKeyDown(void) {
 	if (_kbhit())
@@ -47,12 +37,7 @@ int getKeyDown(void) {
 }
 
 /*
-���ϴ� Ư�� ��ġ�� ������ �ϰ� ���� �� �����ϴ� �Լ�
-SetconsoleCursorPosition()ȣ���Ϸ���  <Windows.h> include.
-GetStdHandle()�� ��ü �ڵ��� ��ȯ�ϴ� �Լ��� �ȿ� �Ķ����ͷ� ������ �����ָ� �ڵ� ���� ��ȯ ��.
-- ���ڷ� STD_OUTPUT_HANDLE�� �ָ� ǥ���ܼ������� �ڵ� ��ȯ.
-SetconsoleCursorPosition()�� ù ���ڷ� �ڵ� ���� �ְ� �� ��° ���ڿ��� ��ġ ���� �ָ�
-������ ��ġ�� Ŀ���� �̵��Ѵ�.
+Console cursor move to (x,y)
 */
 void gotoxy(int x, int y) {
 	COORD Pos;
@@ -62,11 +47,7 @@ void gotoxy(int x, int y) {
 }
 
 /*
-�ܼ� Ŀ�� ��ü�� ������ �Լ�
-dwSize �� Ŀ���� �β� (1~100,��~�β�)
-bVisible�� �ֿܼ� Ŀ�� ���� ���ο� ���� ����
-SetConsoleCursorInfo()�� ������ �ܼ� ��ũ�� ���ۿ� ���� Ŀ���� ����(�β�,���⿩��)�� �����ϴ� ����
-�Ű����� : �ܼ� ��ũ�� ���ۿ� ���� �ڵ�, CONSOLE_CURSOR_INFO ����ü �ѱ�
+Hide cursor before game start
 */
 void hidecursor(void) {
 	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -75,21 +56,23 @@ void hidecursor(void) {
 	info.bVisible = FALSE;
 	SetConsoleCursorInfo(consoleHandle, &info);
 }
-
-int isOverlap(int savedKey, int key) {
-	if (savedKey == UP && key == DOWN)
+/*
+Ignore input key that reverse to peviousKey
+*/
+int isOverlap(int previousKey, int key) {
+	if (previousKey == UP && key == DOWN)
 	{
 			return TRUE;
 	}
-	if (savedKey == DOWN && key == UP)
+	if (previousKey == DOWN && key == UP)
 	{
 			return TRUE;
 	}
-	if (savedKey == LEFT && key == RIGHT)
+	if (previousKey == LEFT && key == RIGHT)
 	{
 		return TRUE;
 	}
-	if (savedKey == RIGHT && key == LEFT)
+	if (previousKey == RIGHT && key == LEFT)
 	{
 		return TRUE;
 	}
@@ -97,7 +80,8 @@ int isOverlap(int savedKey, int key) {
 }
 
 /*
-���������� �ְ������� �����ϰ�, Queue�� ���� ����.
+Delete all queue and record best score
+When game ends, call this function
 */
 void Game_GameOver(int mode, int score, int best, Queue *pq, int stage, int * scoreArr) {
 	FILE * wfp;
@@ -137,17 +121,20 @@ void Game_GameOver(int mode, int score, int best, Queue *pq, int stage, int * sc
 	printf("\n");
 	SetConsoleTextAttribute(hand, 7);
 
-	// ť�� ���� ����.
+	// Delete all queue
 	while (!isEmpty(pq))
 	{
 		Dequeue(pq);
 	}
 }
 
+/*
+Main game loop
+*/
 void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	SnakePos snakeHead = { MAP_SIZE / 4 - 2, MAP_SIZE / 4 + 1 };
+	SnakePos snakeHead = { 22 / 4 - 2, 22 / 4 + 1 };
 	SnakePos snakeNeck;
 	SnakePos snakeTail;
 	FruitPos fruit;
@@ -175,7 +162,7 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 	QueueInit(&queue);
 	fruit.numOfFruit = 0;
 
-	//���� ���ÿ� ���� ���ھ� �迭 ����
+	//Choose best score array
 	if (mode == 1)
 	{
 		bestScore = scoreArr[stage - 1];
@@ -184,7 +171,7 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 	{
 		bestScore = scoreArr[stage - 1 + 4];
 	}
-	// ���õ� ���� �׸�.
+	// Stage init
 	if (stage == 1)
 	{
 		Map_GamemapInitStage1(map);
@@ -207,10 +194,10 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 
 	while (1)
 	{
-		//ȭ�� ���� �ӵ�
+		//Console refresh
 		Sleep(refreshInterval / (DWORD)NORMAL); // 1200 / 10 = 0.12sec
 		innerTimer++;
-		//�ּ� interval => 500
+		//Minimal interval => 500
 		if (refreshInterval >= 500)
 		{
 			if ((refreshInterval * innerTimer) >= 150000)
@@ -221,19 +208,19 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 			}
 		}
 
-		// draw fruit
+		// Draw fruit
 		if (specialTime == TRUE)
 		{
-			// if special fruit nonexist
+			// If special fruit nonexist
 			if (specialFruit == FALSE)
 			{
-				// if normal fruit exist
+				// If normal fruit exist
 				if (fruit.numOfFruit == 1)
 				{
-					// normal fruit delete
+					// Normal fruit delete
 					Game_RemoveFruit(map, &fruit);
 				}
-				// make set special fruit
+				// Make set special fruit
 				Game_DrawFruit(map, &fruit, RED);
 				specialFruit = TRUE;
 			}
@@ -254,7 +241,7 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 		}
 		Map_GamemapDrawScoreboard(score, bestScore, stage);
 
-		//���ϰ� ���� �浹
+		//Checking collision between snake and fruit
 		if (isColWithFruit(&snakeHead, &fruit) == TRUE)
 		{
 			(fruit.numOfFruit)--;
@@ -269,12 +256,11 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 			}
 			else
 			{
-				// ���� + .
 				score += 5;
 			}
 		}
 
-		// ó�� Ű �Է��� ���ٸ�.
+		// Wait for keyboard input
 		while (previousKey == 0)
 		{
 			if (_kbhit() != 0 && _getch() == 224)
@@ -285,62 +271,61 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 			}
 		}
 
-		//Ű ���� ��!
+		//If key input exist
 		if (_kbhit() != 0)
 		{
-			//Ű �Է¹���
 			key = _getch();
-			//���� ����
 
+			//Game exit
 			if (key == 't' || key == 'T')
 			{
 				return;
 			}
-			//���� ����.
+			//Game pause
 			else if (key == 'p' || key == 'P')
 			{
 				system("pause");
-				//	'�ƹ�Ű�� �����ÿ�' ����.
+				//Delete "press any key to continue..."
 				gotoxy(DEFAULT_X, MAP_SIZE + 6);
 				printf("                                            ");
 				gotoxy(DEFAULT_X, DEFAULT_Y);
 			}
-			// Ű ���� ����Ű�̸�
+			// If key is arrowkey
 			else if (key == 224)
 			{
-				//���� �Է¹���.
 				key = _getch();
-				// ���� ������ �ݴ��Ͻ� �����ϰ�, Ű �� ����.
+				// Reverse key check
 				if (isOverlap(previousKey, key) == TRUE)
 				{
 					key = previousKey;
 				}
 			}
+			//If key is not t,p,arrow 
 			else
-			{ // not (t,p,arrow)
+			{
 				key = previousKey;
 			}
 		}
 		///////////// Snake Move Section
 
-		// �Ӹ��� ������ ���̴� �Ӹ��κ��� ������.
+		// Save head position
 		snakeNeck = snakeHead;
 		previousKey = Game_PlayMoveSnake(map, &snakeHead, key);
-		Enqueue(&queue, snakeNeck); // ť�� ���Ӹ����� ��ġ�� ����.
+		Enqueue(&queue, snakeNeck); 
 		Game_PlayDrawTail(map, snakeNeck.x, snakeNeck.y);
 
-		// ������ �������ߴٸ�,
+		// If snake can't eat fruit
 		if (removeTail == TRUE)
 		{
 			snakeTail = Dequeue(&queue);
 			Game_PlayRemoveTail(map, snakeTail.x, snakeTail.y);
 		}
-		//������ �Ծ��ٸ�, ( �� ������ ������ ����. )
+		//If snake eat fruit
 		else
 		{
 			removeTail = TRUE;
 		}
-		// �浹 ���� üũ. ���� ����
+		// Checking collision (wall, tail)
 		if (isCollision(previousKey))
 		{
 			Game_GameOver(mode, score, bestScore, &queue, stage, scoreArr);
@@ -362,7 +347,7 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 				Game_GameOver(mode, score, bestScore, &queue, stage, scoreArr);
 				return;
 			}
-		}a
+		}
 		repeatTimes++;
 	}
 }

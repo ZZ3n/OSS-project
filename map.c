@@ -11,9 +11,10 @@ extern const int DEFAULT_Y;
 extern const int EMPTY;
 extern const int WALL;
 
-//show start menu
+/*
+Draw start menu
+*/
 int Map_MenuDrawStart(void) {
-	// SetConsoleTextAttribute()�Լ����� ���� �����Ǵ�  �����ڵ� ����, �ʱ�ȭ
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hand, 13);
 	gotoxy(DEFAULT_X, DEFAULT_Y);
@@ -35,26 +36,25 @@ int Map_MenuDrawStart(void) {
 
 
 	SetConsoleTextAttribute(hand, 14);
-	//  Ű�� 's'�� 't'�� �Է� �� �� ���� ���� �����̸� ǥ���ϰ� �ϵ��� �ϴ� while��
+	// Blinking console output
 	while (1)
 	{
-		// Ű �Է¹��� �� ���� getKeyDown()�Լ� ȣ���ؼ� keyDown������ ����
+		// Key input
 		int keyDown = getKeyDown();
-		// ���� ����
+		// Game start
 		if (keyDown == 's' || keyDown == 'S')
 		{
 			SetConsoleTextAttribute(hand, 7);
 			return TRUE;
 		}
-		// ���� ����
+		// Game exit
 		if (keyDown == 't' || keyDown == 'T')
 		{
 			SetConsoleTextAttribute(hand, 7);
 			return FALSE;
 		}
 		/*
-		"-- press 's' to start --" ���ڰ� �����Ÿ��� ��ó�� ǥ�� �ϱ� ���� Sleep()�Լ��� ����
-		���ڿ� ��ĭ�� ������ ���� �Ѵ�.
+		Blinking "-- press 's' to start --" 
 		*/
 		gotoxy(DEFAULT_X + 5, DEFAULT_Y + 9);
 		printf("-- press 's' to start --");
@@ -67,12 +67,9 @@ int Map_MenuDrawStart(void) {
 }
 
 /*
-SetConsoleTextAttribute(hand, 11); // �ܼ� ��ũ�� ���ۿ� �������� �ؽ�Ʈ���� �Ӽ� �����ϴ� �Լ�
-�Ű����� - ��ũ�� ������ �ڵ�, ���� ���� ���� ��������(1~15)
-Sleep()�Լ��� �����ð� ���� �۾��� ����(wait)�ϰ� ���� �� ����.
-�ڵ� https://m.blog.naver.com/sharonichoya/220873844942
+Draw mode menu
 */
-int Map_MenuDrawMode(int *scoreArr)
+int Map_MenuDrawMode(void)
 {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -96,11 +93,13 @@ int Map_MenuDrawMode(int *scoreArr)
 	while (1)
 	{
 		int keyDown = getKeyDown();
+		//Classic mode
 		if (keyDown == '1')
 		{
 			SetConsoleTextAttribute(hand, 7);
 			return 1;
 		}
+		//Time limit mode
 		if (keyDown == '2')
 		{
 			SetConsoleTextAttribute(hand, 7);
@@ -121,15 +120,15 @@ int Map_MenuDrawMode(int *scoreArr)
 int Map_MenuDrawStage(int mode, int * scoreArr) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	int i;
-	// 'score.txt' ���� �б����� ������ ����, ��������  �����ͺ���
+	//Pointer that associated to 'score.txt' 
 	FILE * readfp;
 	int errCode;
 	errCode = fopen_s(&readfp, "score.txt", "r");
 
-	// ������ ���� �� ���� ��� 'score.txt' ������ ���� ����.
+	// If doesn't exist "score.txt"
 	if (readfp == NULL)
 	{
-		//���� ����
+		//Create file
 		errCode = fopen_s(&readfp, "score.txt", "w+");
 		fclose(readfp);
 		errCode = fopen_s(&readfp, "score.txt", "r");
@@ -144,9 +143,10 @@ int Map_MenuDrawStage(int mode, int * scoreArr) {
 	gotoxy(DEFAULT_X, DEFAULT_Y + 2);
 	printf("============================================");
 	SetConsoleTextAttribute(hand, 15);
-	// Score �о� ��.
+	// Read "score.txt"
 	fscanf_s(readfp, "%d %d %d %d %d %d %d %d", &scoreArr[0], &scoreArr[1], &scoreArr[2], &scoreArr[3], &scoreArr[4], &scoreArr[5], &scoreArr[6], &scoreArr[7]);
 
+	// Print best score by mode
 	if (mode == 1)
 	{
 		for (i = 0; i < 4; i++)
@@ -162,11 +162,11 @@ int Map_MenuDrawStage(int mode, int * scoreArr) {
 			gotoxy(DEFAULT_X, DEFAULT_Y + (i + 4));
 			printf(" Stage [%d] : %d", i + 1, scoreArr[i + 4]);
 		}
-	}// �ְ� ���� ����.
+	}
 
 	fclose(readfp);
 
-	//�������� ����
+	//Choose stage
 	while (1)
 	{
 		int keyDown = getKeyDown();
@@ -200,11 +200,7 @@ int Map_MenuDrawStage(int mode, int * scoreArr) {
 	}
 }
 
-
-//////////////////////////////////////STAGE MAP SETTING////////////////////////////////
-//stageOneInit~ stageFourInit ������ �Լ���  drawMainMap���� �ٷ� ���� �׸� �� �ְ� �̸� WALL�� ���� ������ ������
-
-// stage 1�� �� ������ �Լ� <�׸� ��>
+// Stage 1 create and init(Square shape)
 void Map_GamemapInitStage1(MapData map[22][22]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++)
@@ -232,7 +228,7 @@ void Map_GamemapInitStage1(MapData map[22][22]) {
 	}
 }
 
-// stage 2�� �� ������ �Լ� < �׸� ���� �߰��� ��>
+// Stage 2 create and init( ][ shape)
 void Map_GamemapInitStage2(MapData map[22][22]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++)
@@ -252,7 +248,7 @@ void Map_GamemapInitStage2(MapData map[22][22]) {
 	}
 }
 
-// stage 3�� �� ������ �Լ� < ���� ��>
+// Stage 3 create and init(+ shape)
 void Map_GamemapInitStage3(MapData map[22][22]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++)
@@ -271,7 +267,7 @@ void Map_GamemapInitStage3(MapData map[22][22]) {
 	}
 }
 
-// stage 4�� �� ������ �Լ� < ũ�ν� ��>
+// Stage 4 create and init(X shape)
 void Map_GamemapInitStage4(MapData map[22][22]) {
 	int i, j;
 	for (i = 0; i < MAP_SIZE; i++)
@@ -297,10 +293,7 @@ void Map_GamemapInitStage4(MapData map[22][22]) {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////// D R A W ////////////////////////////////////////
-
-//draw game map
+//Draw game map
 void Map_GamemapDrawWall(MapData map[22][22]) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hand, 15);

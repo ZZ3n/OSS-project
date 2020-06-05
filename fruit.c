@@ -28,7 +28,7 @@ int Game_DrawFruit(MapData map[22][22], FruitPos * fp, int COLOR) {
 			(fp->numOfFruit)++;
 			SetConsoleTextAttribute(hand, COLOR);
 			gotoxy(i, j);
-			//print ��
+			//Print star
 			printf("\u2605");
 			SetConsoleTextAttribute(hand, 7);
 

@@ -31,7 +31,7 @@ int main(void) {
 		}
 
 		system("cls");
-		mode = Map_MenuDrawMode(scoreArr);
+		mode = Map_MenuDrawMode();
 
 		system("cls");
 		stage = Map_MenuDrawStage(mode, scoreArr);
