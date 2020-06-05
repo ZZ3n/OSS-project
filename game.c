@@ -7,46 +7,52 @@
 #include "queue.h"
 #include "snake.h"
 
-extern const int NORMAL;
-
-extern const int UP;
-extern const int DOWN;
-extern const int LEFT;
-extern const int RIGHT;
-
 extern const int MAP_SIZE;
 
 extern const int DEFAULT_X;
 extern const int DEFAULT_Y;
 
+extern const int NORMAL;
+
+extern const int RIGHT;
+extern const int LEFT;
+extern const int DOWN;
+extern const int UP;
+
+extern const int GREEN;
+extern const int RED;
+
 ///////////////////////////////////////////////////////////////////////////
 
 /*
-_kbhit() ÇÔ¼ö´Â Å°º¸µå°¡ ÀÔ·ÂµÇ¾ú´ÂÁö È®ÀÎ ÇÏ´Â ÇÔ¼ö·Î
-ÀÔ·Â ¹öÆÛÀÇ ³»¿ë È®ÀÎ ÇØ Å° ÀÔ·Â ÀÖÀ¸¸é true ¾øÀ¸¸é false ¹ÝÈ¯
-waiting ÇÔ¼ö°¡ ¾Æ´Ï¶ó ÀÔ·ÂÀÌ ÀÖµç ¾øµç ¹Ù·Î ¹ÝÈ¯ÇÏ¹Ç·Î
-( ¸¸¾à ÀÔ·Â ÇÔ¼ö¸¦ ÅëÇØ Å°ÀÇ ÀÔ·ÂÀ» È®ÀÎÇÏ·Á°í
-ÀÔ·Â ÇÔ¼ö¸¦ È£ÃâÇÑ ½ÃÁ¡ºÎÅÍ ´ë±â »óÅÂ¿¡ µé¾î°¡¼­ ÀÔ·ÂÀÌ µé¾î¿Ã ¶§ ±îÁö ±â´Ù¸®°Ô µÈ´Ù)
-¹ÝÈ¯ °ª¿¡ µû¶ó ÀÛ¾÷ ÁøÇà °¡´ÉÇÏ´Ù
+_kbhit() ï¿½Ô¼ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ï¿½å°¡ ï¿½Ô·ÂµÇ¾ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½
+ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½ Å° ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ true ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ false ï¿½ï¿½È¯
+waiting ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½Æ´Ï¶ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½Öµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½È¯ï¿½Ï¹Ç·ï¿½
+( ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½
+ï¿½Ô·ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½î°¡ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½ï¿½ï¿½ ï¿½È´ï¿½)
+ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Û¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½
 
-_getch() ÇÔ¼ö´Â scanf_s()¿Í ºñ½ÁÇÏ°Ô ÀÔ·Â ¹Þ´Â ÇÔ¼ö·Î ÀÌ ÇÔ¼ö¿Í ´Ù¸¥ Á¡Àº ÀÔ·ÂÇÑ Å°º¸µåÀÇ ³»¿ëÀÌ È­¸é¿¡ Ãâ·ÂµÇÁö ¾Ê´Â´Ù´Â Á¡
-¶ÇÇÑ enter key ¸¦ ÅëÇØ ÀÔ·Â È®ÀÎÇÏ´Â°Ô ¾Æ´Ï¶ó Å°¸¦ ´©¸¦ ¼ø°£ ÀÔ·Â ¹öÆÛ¿¡ °ªÀÌ µé¾î°¡°Ô ÇÔ.
-_getch()´Â Á¤¼ö¸¦ ¹ÝÈ¯ÇÑ´Ù.
+_getch() ï¿½Ô¼ï¿½ï¿½ï¿½ scanf_s()ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ô·ï¿½ ï¿½Þ´ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È­ï¿½é¿¡ ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ ï¿½Ê´Â´Ù´ï¿½ ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ enter key ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ È®ï¿½ï¿½ï¿½Ï´Â°ï¿½ ï¿½Æ´Ï¶ï¿½ Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î°¡ï¿½ï¿½ ï¿½ï¿½.
+_getch()ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 
-_kbhit(), _getch()´Â <conio.h> header includeÇÔ.
+_kbhit(), _getch()ï¿½ï¿½ <conio.h> header includeï¿½ï¿½.
 */
 int getKeyDown(void) {
-	if (_kbhit()) return _getch();
+	if (_kbhit())
+	{
+		return _getch();
+	}
 	return -1;
 }
 
 /*
-¿øÇÏ´Â Æ¯Á¤ À§Ä¡¿¡ Ãâ·ÂÀ» ÇÏ°í ½ÍÀ» ¶§ »ç¿ëÇÏ´Â ÇÔ¼ö
-SetconsoleCursorPosition()È£ÃâÇÏ·Á¸é  <Windows.h> include.
-GetStdHandle()´Â ½ÇÃ¼ ÇÚµéÀ» ¹ÝÈ¯ÇÏ´Â ÇÔ¼ö·Î ¾È¿¡ ÆÄ¶ó¹ÌÅÍ·Î Á¾·ù¸¦ Á¤ÇØÁÖ¸é ÇÚµé °ªÀ» ¹ÝÈ¯ ÇÔ.
-- ÀÎÀÚ·Î STD_OUTPUT_HANDLE¸¦ ÁÖ¸é Ç¥ÁØÄÜ¼ÖÃâ·ÂÀÇ ÇÚµé ¹ÝÈ¯.
-SetconsoleCursorPosition()´Â Ã¹ ÀÎÀÚ·Î ÇÚµé °ªÀ» ÁÖ°í µÎ ¹øÂ° ÀÎÀÚ¿¡´Â À§Ä¡ °ªÀ» ÁÖ¸é
-Á¤ÇØÁø À§Ä¡·Î Ä¿¼­°¡ ÀÌµ¿ÇÑ´Ù.
+ï¿½ï¿½ï¿½Ï´ï¿½ Æ¯ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
+SetconsoleCursorPosition()È£ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½  <Windows.h> include.
+GetStdHandle()ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½Úµï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½Í·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½.
+- ï¿½ï¿½ï¿½Ú·ï¿½ STD_OUTPUT_HANDLEï¿½ï¿½ ï¿½Ö¸ï¿½ Ç¥ï¿½ï¿½ï¿½Ü¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½È¯.
+SetconsoleCursorPosition()ï¿½ï¿½ Ã¹ ï¿½ï¿½ï¿½Ú·ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ ï¿½ï¿½Â° ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¸ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ñ´ï¿½.
 */
 void gotoxy(int x, int y) {
 	COORD Pos;
@@ -56,11 +62,11 @@ void gotoxy(int x, int y) {
 }
 
 /*
-ÄÜ¼Ö Ä¿¼­ ÀÚÃ¼¸¦ ¼û±â´Â ÇÔ¼ö
-dwSize ´Â Ä¿¼­ÀÇ µÎ²² (1~100,¾ã~µÎ²®)
-bVisible´Â ÄÜ¼Ö¿¡ Ä¿¼­ ³ëÃâ ¿©ºÎ¿¡ ´ëÇÑ º¯¼ö
-SetConsoleCursorInfo()´Â ÁöÁ¤µÈ ÄÜ¼Ö ½ºÅ©¸° ¹öÆÛ¿¡ ´ëÇØ Ä¿¼­ÀÇ ÇüÅÂ(µÎ²²,³ëÃâ¿©ºÎ)¸¦ ¼³Á¤ÇÏ´Â ¿ªÇÒ
-¸Å°³º¯¼ö : ÄÜ¼Ö ½ºÅ©¸° ¹öÆÛ¿¡ ´ëÇÑ ÇÚµé, CONSOLE_CURSOR_INFO ±¸Á¶Ã¼ ³Ñ±è
+ï¿½Ü¼ï¿½ Ä¿ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
+dwSize ï¿½ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½Î²ï¿½ (1~100,ï¿½ï¿½~ï¿½Î²ï¿½)
+bVisibleï¿½ï¿½ ï¿½Ü¼Ö¿ï¿½ Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+SetConsoleCursorInfo()ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ü¼ï¿½ ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Î²ï¿½,ï¿½ï¿½ï¿½â¿©ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½
+ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½ : ï¿½Ü¼ï¿½ ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½, CONSOLE_CURSOR_INFO ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½Ñ±ï¿½
 */
 void hidecursor(void) {
 	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -72,19 +78,26 @@ void hidecursor(void) {
 
 int isOverlap(int savedKey, int key) {
 	if (savedKey == UP && key == DOWN)
-		return TRUE;
+	{
+			return TRUE;
+	}
 	if (savedKey == DOWN && key == UP)
-		return TRUE;
+	{
+			return TRUE;
+	}
 	if (savedKey == LEFT && key == RIGHT)
+	{
 		return TRUE;
+	}
 	if (savedKey == RIGHT && key == LEFT)
+	{
 		return TRUE;
-
+	}
 	return FALSE;
 }
 
 /*
-½ºÅ×ÀÌÁöº° ÃÖ°íÁ¡¼ö¸¦ ±â·ÏÇÏ°í, Queue¸¦ ÀüºÎ Áö¿ò.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½, Queueï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 */
 void Game_GameOver(int mode, int score, int best, Queue *pq, int stage, int * scoreArr) {
 	FILE * wfp;
@@ -92,10 +105,12 @@ void Game_GameOver(int mode, int score, int best, Queue *pq, int stage, int * sc
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	if (mode == 1)
 	{
-		if (score >= best) {
+		if (score >= best)
+		 {
 			scoreArr[stage - 1] = score;
 		}
-		else {
+		else
+		{
 			scoreArr[stage - 1] = best;
 		}
 	}
@@ -111,9 +126,8 @@ void Game_GameOver(int mode, int score, int best, Queue *pq, int stage, int * sc
 	errCode = fopen_s(&wfp, "score.txt", "w");
 
 	fprintf(wfp, "%d %d %d %d %d %d %d %d", scoreArr[0], scoreArr[1], scoreArr[2], scoreArr[3], scoreArr[4], scoreArr[5], scoreArr[6], scoreArr[7]);
-
-
 	fclose(wfp);
+
 	SetConsoleTextAttribute(hand, 14);
 	gotoxy(MAP_SIZE / 2 - 4, MAP_SIZE / 2 - 5);
 	printf("===<GAME OVER>===\n");
@@ -123,34 +137,45 @@ void Game_GameOver(int mode, int score, int best, Queue *pq, int stage, int * sc
 	printf("\n");
 	SetConsoleTextAttribute(hand, 7);
 
-	while (!isEmpty(pq)) { // Å¥¸¦ ÀüºÎ »èÁ¦.
+	// Å¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+	while (!isEmpty(pq))
+	{
 		Dequeue(pq);
 	}
 }
 
 void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
-	int bestScore = 0;
-	int score = 0;
-	int key = 0, previousKey = 0;
-	unsigned int repeatTimes = 0;
-	Queue queue;
+
 	SnakePos snakeHead = { MAP_SIZE / 4 - 2, MAP_SIZE / 4 + 1 };
 	SnakePos snakeNeck;
 	SnakePos snakeTail;
-	int removeTail = FALSE;
 	FruitPos fruit;
-	double refreshInterval = 1200;
 
+	Queue queue;
+
+	int previousKey = 0;
+	int key = 0;
+	int bestScore = 0;
+	int score = 0;
+
+	unsigned int repeatTimes = 0;
+	double wholeTime = 120 * 1000;
+
+	double refreshInterval = 1200;
 	int innerTimer = 0;
+
 	// special fruit exist = 1 , nonexist = 0
 	int specialFruit = FALSE;
 	// special fruit appear time = 1
 	int specialTime = FALSE;
-	double wholeTime = 120 * 1000;
+
+	int removeTail = FALSE;
+
 	QueueInit(&queue);
 	fruit.numOfFruit = 0;
-	//¸ðµå ¼±ÅÃ¿¡ µû¸¥ ½ºÄÚ¾î ¹è¿­ ¼±ÅÃ
+
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¾ï¿½ ï¿½è¿­ ï¿½ï¿½ï¿½ï¿½
 	if (mode == 1)
 	{
 		bestScore = scoreArr[stage - 1];
@@ -159,29 +184,37 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 	{
 		bestScore = scoreArr[stage - 1 + 4];
 	}
-	// ¼±ÅÃµÈ ¸ÊÀ» ±×¸².
-	if (stage == 1) {
+	// ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½.
+	if (stage == 1)
+	{
 		Map_GamemapInitStage1(map);
 	}
-	else if (stage == 2) {
+	else if (stage == 2)
+	{
 		Map_GamemapInitStage2(map);
 	}
-	else if (stage == 3) {
+	else if (stage == 3)
+	{
 		Map_GamemapInitStage3(map);
 	}
-	else {
+	else
+	{
 		Map_GamemapInitStage4(map);
 	}
+
 	Map_GamemapDrawWall(map);
 	Game_PlayDrawHead(map, snakeHead.x, snakeHead.y);
 
-	while (1) {
-		//È­¸é °»½Å ¼Óµµ
+	while (1)
+	{
+		//È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½
 		Sleep(refreshInterval / (DWORD)NORMAL); // 1200 / 10 = 0.12sec
 		innerTimer++;
-		//ÃÖ¼Ò interval => 500
-		if (refreshInterval >= 500) {
-			if ((refreshInterval * innerTimer) >= 150000) {
+		//ï¿½Ö¼ï¿½ interval => 500
+		if (refreshInterval >= 500)
+		{
+			if ((refreshInterval * innerTimer) >= 150000)
+			{
 				refreshInterval -= 150;
 				innerTimer = 0;
 				specialTime = TRUE;
@@ -189,16 +222,25 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 		}
 
 		// draw fruit
-		if (specialTime == TRUE) {
-			if (specialFruit == FALSE) { // if special fruit nonexist
-				if (fruit.numOfFruit == 1) { // if normal fruit exist
-					Game_RemoveFruit(map, &fruit); // normal fruit delete
+		if (specialTime == TRUE)
+		{
+			// if special fruit nonexist
+			if (specialFruit == FALSE)
+			{
+				// if normal fruit exist
+				if (fruit.numOfFruit == 1)
+				{
+					// normal fruit delete
+					Game_RemoveFruit(map, &fruit);
 				}
-				Game_DrawSpecial(map, &fruit); // make set special fruit
-				specialFruit = TRUE; //
+				// make set special fruit
+				Game_DrawFruit(map, &fruit, RED);
+				specialFruit = TRUE;
 			}
-			else {
-				if ((refreshInterval * innerTimer) >= 50000) {
+			else
+			{
+				if ((refreshInterval * innerTimer) >= 50000)
+				{
 					Game_RemoveFruit(map, &fruit);
 					specialFruit = FALSE;
 					specialTime = FALSE;
@@ -206,85 +248,101 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 			}
 		}
 
-		if (fruit.numOfFruit == 0) {
-			Game_DrawFruit(map, &fruit);
+		if (fruit.numOfFruit == 0)
+		{
+			Game_DrawFruit(map, &fruit, GREEN);
 		}
 		Map_GamemapDrawScoreboard(score, bestScore, stage);
 
-		//°úÀÏ°ú ¹ìÀÇ Ãæµ¹
-		if (isColWithFruit(&snakeHead, &fruit) == TRUE) {
-			(fruit.numOfFruit)--; //°¹¼ö ÁÙÀÓ.
-			removeTail = FALSE;	// º¯¼ö ¼³Á¤.
+		//ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹
+		if (isColWithFruit(&snakeHead, &fruit) == TRUE)
+		{
+			(fruit.numOfFruit)--;
+			// INdicates that the tail collides
+			removeTail = FALSE;
 
-			if (specialFruit) {
+			if (specialFruit)
+			{
 				score += 10;
-				specialFruit = 0;
-				specialTime = 0;
+				specialFruit = FALSE;
+				specialTime = FALSE;
 			}
-			else {
-				score += 5; // Á¡¼ö + .
+			else
+			{
+				// ï¿½ï¿½ï¿½ï¿½ + .
+				score += 5;
 			}
 		}
 
-		// Ã³À½ Å° ÀÔ·ÂÀ» ±â´Ù¸².
-		while (previousKey == 0) {
-			if (_kbhit() != 0 && _getch() == 224) {
+		// Ã³ï¿½ï¿½ Å° ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½.
+		while (previousKey == 0)
+		{
+			if (_kbhit() != 0 && _getch() == 224)
+			{
 				previousKey = _getch();
 				key = previousKey;
 				break;
 			}
 		}
 
-		//Å° ´©¸¦ ½Ã!
-		if (_kbhit() != 0) {
-			//Å° ÀÔ·Â¹ÞÀ½
+		//Å° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½!
+		if (_kbhit() != 0)
+		{
+			//Å° ï¿½Ô·Â¹ï¿½ï¿½ï¿½
 			key = _getch();
-			//°ÔÀÓ Á¾·á
-			if (key == 't' || key == 'T') {
+			//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+
+			if (key == 't' || key == 'T')
+			{
 				return;
 			}
-			//°ÔÀÓ ¸ØÃã.
-			else if (key == 'p' || key == 'P') {
-
+			//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+			else if (key == 'p' || key == 'P')
+			{
 				system("pause");
-				//	'¾Æ¹«Å°³ª ´©¸£½Ã¿À' Áö¿ò.
+				//	'ï¿½Æ¹ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½' ï¿½ï¿½ï¿½ï¿½.
 				gotoxy(DEFAULT_X, MAP_SIZE + 6);
 				printf("                                            ");
 				gotoxy(DEFAULT_X, DEFAULT_Y);
 			}
-			// Å° °ªÀÌ ¹æÇâÅ°ÀÌ¸é
-			else if (key == 224) {
-				//¹æÇâ ÀÔ·Â¹ÞÀ½.
+			// Å° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å°ï¿½Ì¸ï¿½
+			else if (key == 224)
+			{
+				//ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·Â¹ï¿½ï¿½ï¿½.
 				key = _getch();
-				// ÀÌÀü ¹æÇâ°ú ¹Ý´ëÀÏ½Ã ¹«½ÃÇÏ°í, Å° °ª ÀúÀå.
-				if (isOverlap(previousKey, key) == TRUE) {
+				// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý´ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½, Å° ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+				if (isOverlap(previousKey, key) == TRUE)
+				{
 					key = previousKey;
 				}
 			}
-			else { // not (t,p,arrow)
+			else
+			{ // not (t,p,arrow)
 				key = previousKey;
 			}
-
 		}
 		///////////// Snake Move Section
 
-		// ¸Ó¸®´Â ¿òÁ÷ÀÏ °ÍÀÌ´Ï ¸Ó¸®ºÎºÐÀ» ÀúÀåÇÔ.
+		// ï¿½Ó¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Ó¸ï¿½ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 		snakeNeck = snakeHead;
 		previousKey = Game_PlayMoveSnake(map, &snakeHead, key);
-		Enqueue(&queue, snakeNeck); // Å¥¿¡ ¹ì¸Ó¸®¿´´ø À§Ä¡¸¦ ³ÖÀ½.
+		Enqueue(&queue, snakeNeck); // Å¥ï¿½ï¿½ ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 		Game_PlayDrawTail(map, snakeNeck.x, snakeNeck.y);
 
-		// °úÀÏÀ» ¸ÔÁö¸øÇß´Ù¸é,
-		if (removeTail == TRUE) {
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß´Ù¸ï¿½,
+		if (removeTail == TRUE)
+		{
 			snakeTail = Dequeue(&queue);
 			Game_PlayRemoveTail(map, snakeTail.x, snakeTail.y);
 		}
-		//°úÀÏÀ» ¸Ô¾ú´Ù¸é, ( ¹ì ²¿¸®¸¦ Áö¿ìÁö ¾ÊÀ½. )
-		else {
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¾ï¿½ï¿½Ù¸ï¿½, ( ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. )
+		else
+		{
 			removeTail = TRUE;
 		}
-		// Ãæµ¹ º¯¼ö Ã¼Å©. °ÔÀÓ ¿À¹ö
-		if (isCollision(previousKey)) {
+		// ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ Ã¼Å©. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		if (isCollision(previousKey))
+		{
 			Game_GameOver(mode, score, bestScore, &queue, stage, scoreArr);
 			return;
 		}
@@ -304,9 +362,7 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 				Game_GameOver(mode, score, bestScore, &queue, stage, scoreArr);
 				return;
 			}
-		}
-
-
+		}a
 		repeatTimes++;
 	}
 }

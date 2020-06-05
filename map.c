@@ -3,16 +3,17 @@
 #include "map.h"
 #include "game.h"
 
+extern const int MAP_SIZE;
+
 extern const int DEFAULT_X;
 extern const int DEFAULT_Y;
 
-extern const int WALL;
-extern const int MAP_SIZE;
 extern const int EMPTY;
+extern const int WALL;
 
 //show start menu
 int Map_MenuDrawStart(void) {
-	// SetConsoleTextAttribute()ÇÔ¼ö¿¡¼­ °è¼Ó »ç¿ëµÇ´Â  Ãâ·ÂÇÚµé ¼±¾ð, ÃÊ±âÈ­
+	// SetConsoleTextAttribute()ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½  ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½Ê±ï¿½È­
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hand, 13);
 	gotoxy(DEFAULT_X, DEFAULT_Y);
@@ -34,23 +35,26 @@ int Map_MenuDrawStart(void) {
 
 
 	SetConsoleTextAttribute(hand, 14);
-	//  Å°°ª 's'³ª 't'°¡ ÀÔ·Â µÉ ¶§ ±îÁö °è¼Ó ±ôºýÀÌ¸ç Ç¥½ÃÇÏ°Ô ÇÏµµ·Ï ÇÏ´Â while¹®
-	while (1) {
-		// Å° ÀÔ·Â¹ÞÀ» ¶§ ¸¶´Ù getKeyDown()ÇÔ¼ö È£ÃâÇØ¼­ keyDownº¯¼ö¿¡ ÀúÀå
+	//  Å°ï¿½ï¿½ 's'ï¿½ï¿½ 't'ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ Ç¥ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ïµï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ whileï¿½ï¿½
+	while (1)
+	{
+		// Å° ï¿½Ô·Â¹ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ getKeyDown()ï¿½Ô¼ï¿½ È£ï¿½ï¿½ï¿½Ø¼ï¿½ keyDownï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		int keyDown = getKeyDown();
-		// °ÔÀÓ ½ÃÀÛ
-		if (keyDown == 's' || keyDown == 'S') {
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		if (keyDown == 's' || keyDown == 'S')
+		{
 			SetConsoleTextAttribute(hand, 7);
 			return TRUE;
 		}
-		// °ÔÀÓ Á¾·á
-		if (keyDown == 't' || keyDown == 'T') {
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		if (keyDown == 't' || keyDown == 'T')
+		{
 			SetConsoleTextAttribute(hand, 7);
 			return FALSE;
 		}
 		/*
-		"-- press 's' to start --" ±ÛÀÚ°¡ ±ôºý°Å¸®´Â °ÍÃ³·³ Ç¥Çö ÇÏ±â À§ÇØ Sleep()ÇÔ¼ö¸¦ ¾²¸ç
-		±ÛÀÚ¿Í ºóÄ­À» ¹ø°¥¾Æ Ãâ·Â ÇÑ´Ù.
+		"-- press 's' to start --" ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½Ã³ï¿½ï¿½ Ç¥ï¿½ï¿½ ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ Sleep()ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½Ä­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
 		*/
 		gotoxy(DEFAULT_X + 5, DEFAULT_Y + 9);
 		printf("-- press 's' to start --");
@@ -63,10 +67,10 @@ int Map_MenuDrawStart(void) {
 }
 
 /*
-SetConsoleTextAttribute(hand, 11); // ÄÜ¼Ö ½ºÅ©¸° ¹öÆÛ¿¡ ¾²¿©Áö´Â ÅØ½ºÆ®µéÀÇ ¼Ó¼º ¼³Á¤ÇÏ´Â ÇÔ¼ö
-¸Å°³º¯¼ö - ½ºÅ©¸° ¹öÆÛÀÇ ÇÚµé, ±ÛÀÚ »ö¿¡ ´ëÇÑ »ó¼ö¼ýÀÚ(1~15)
-Sleep()ÇÔ¼ö´Â ÀÏÁ¤½Ã°£ µ¿¾È ÀÛ¾÷À» ´ë±â(wait)ÇÏ°í ½ÍÀ» ¶§ »ç¿ë.
-ÇÚµé https://m.blog.naver.com/sharonichoya/220873844942
+SetConsoleTextAttribute(hand, 11); // ï¿½Ü¼ï¿½ ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
+ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(1~15)
+Sleep()ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Û¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(wait)ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+ï¿½Úµï¿½ https://m.blog.naver.com/sharonichoya/220873844942
 */
 int Map_MenuDrawMode(int *scoreArr)
 {
@@ -89,13 +93,16 @@ int Map_MenuDrawMode(int *scoreArr)
 	gotoxy(DEFAULT_X, DEFAULT_Y + 5);
 	printf(" Time Limit Mode   [%d] ", 2);
 
-	while (1) {
+	while (1)
+	{
 		int keyDown = getKeyDown();
-		if (keyDown == '1') {
+		if (keyDown == '1')
+		{
 			SetConsoleTextAttribute(hand, 7);
 			return 1;
 		}
-		if (keyDown == '2') {
+		if (keyDown == '2')
+		{
 			SetConsoleTextAttribute(hand, 7);
 			return 2;
 		}
@@ -114,14 +121,15 @@ int Map_MenuDrawMode(int *scoreArr)
 int Map_MenuDrawStage(int mode, int * scoreArr) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	int i;
-	// 'score.txt' ÆÄÀÏ ÀÐ±âÀ§ÇÑ Æ÷ÀÎÅÍ º¯¼ö, ¾²±âÀ§ÇÑ  Æ÷ÀÎÅÍº¯¼ö
+	// 'score.txt' ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½ï¿½
 	FILE * readfp;
 	int errCode;
 	errCode = fopen_s(&readfp, "score.txt", "r");
 
-	// °ÔÀÓÀ» ½ÇÇà ÇÑ ÀûÀÌ ¾ø¾î¼­ 'score.txt' ÆÄÀÏÀÌ ¾ø´Â °æ¿ì.
-	if (readfp == NULL) {
-		//ÆÄÀÏ »ý¼º
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î¼­ 'score.txt' ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+	if (readfp == NULL)
+	{
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		errCode = fopen_s(&readfp, "score.txt", "w+");
 		fclose(readfp);
 		errCode = fopen_s(&readfp, "score.txt", "r");
@@ -136,42 +144,49 @@ int Map_MenuDrawStage(int mode, int * scoreArr) {
 	gotoxy(DEFAULT_X, DEFAULT_Y + 2);
 	printf("============================================");
 	SetConsoleTextAttribute(hand, 15);
-	// Score ÀÐ¾î ¿È.
+	// Score ï¿½Ð¾ï¿½ ï¿½ï¿½.
 	fscanf_s(readfp, "%d %d %d %d %d %d %d %d", &scoreArr[0], &scoreArr[1], &scoreArr[2], &scoreArr[3], &scoreArr[4], &scoreArr[5], &scoreArr[6], &scoreArr[7]);
 
 	if (mode == 1)
 	{
-		for (i = 0; i < 4; i++) {
+		for (i = 0; i < 4; i++)
+		{
 			gotoxy(DEFAULT_X, DEFAULT_Y + (i + 4));
 			printf(" Stage [%d] : %d", i + 1, scoreArr[i]);
 		}
 	}
 	else
 	{
-		for (i = 0; i < 4; i++) {
+		for (i = 0; i < 4; i++)
+		{
 			gotoxy(DEFAULT_X, DEFAULT_Y + (i + 4));
 			printf(" Stage [%d] : %d", i + 1, scoreArr[i + 4]);
 		}
-	}// ÃÖ°í Á¡¼ö Ãâ·Â.
+	}// ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 
 	fclose(readfp);
 
-	//½ºÅ×ÀÌÁö ¼±ÅÃ
-	while (1) {
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	while (1)
+	{
 		int keyDown = getKeyDown();
-		if (keyDown == '1') {
+		if (keyDown == '1')
+		{
 			SetConsoleTextAttribute(hand, 7);
 			return 1;
 		}
-		if (keyDown == '2') {
+		if (keyDown == '2')
+		{
 			SetConsoleTextAttribute(hand, 7);
 			return 2;
 		}
-		if (keyDown == '3') {
+		if (keyDown == '3')
+		{
 			SetConsoleTextAttribute(hand, 7);
 			return 3;
 		}
-		if (keyDown == '4') {
+		if (keyDown == '4')
+		{
 			SetConsoleTextAttribute(hand, 7);
 			return 4;
 		}
@@ -183,42 +198,53 @@ int Map_MenuDrawStage(int mode, int * scoreArr) {
 		printf(">>                          ");
 		Sleep(1000 / 3);
 	}
-
 }
 
 
 //////////////////////////////////////STAGE MAP SETTING////////////////////////////////
-//stageOneInit~ stageFourInit ±îÁöÀÇ ÇÔ¼ö´Â  drawMainMap¿¡¼­ ¹Ù·Î ¸ÊÀ» ±×¸± ¼ö ÀÖ°Ô ¹Ì¸® WALLÀÌ »ý±æ °ø°£À» ÁöÁ¤ÇÔ
+//stageOneInit~ stageFourInit ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½  drawMainMapï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½Ì¸ï¿½ WALLï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-// stage 1ÀÇ ¸Ê ¸¸µå´Â ÇÔ¼ö <³×¸ð º®>
+// stage 1ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ <ï¿½×¸ï¿½ ï¿½ï¿½>
 void Map_GamemapInitStage1(MapData map[22][22]) {
 	int i, j;
-	for (i = 0; i < MAP_SIZE; i++) {
-		if (i == 0 || i == MAP_SIZE - 1) {
-			for (j = 0; j < MAP_SIZE; j++) {
+	for (i = 0; i < MAP_SIZE; i++)
+	{
+		if (i == 0 || i == MAP_SIZE - 1)
+		{
+			for (j = 0; j < MAP_SIZE; j++)
+			{
 				map[i][j] = WALL;
 			}
 		}
 		else {
-			for (j = 0; j < MAP_SIZE; j++) {
+			for (j = 0; j < MAP_SIZE; j++)
+			{
 				if (j == 0 || j == MAP_SIZE - 1)
+				{
 					map[i][j] = WALL;
+				}
 				else
+				{
 					map[i][j] = EMPTY;
+				}
 			}
 		}
 	}
 }
 
-// stage 2ÀÇ ¸Ê ¸¸µå´Â ÇÔ¼ö < ³×¸ð º®¿¡ Áß°£¿¡ º®>
+// stage 2ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ < ï¿½×¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½ï¿½>
 void Map_GamemapInitStage2(MapData map[22][22]) {
 	int i, j;
-	for (i = 0; i < MAP_SIZE; i++) {
-		for (j = 0; j < MAP_SIZE; j++) {
-			if (i == (int)MAP_SIZE / 2 || j == 0 || j == MAP_SIZE - 1) {
+	for (i = 0; i < MAP_SIZE; i++)
+	{
+		for (j = 0; j < MAP_SIZE; j++)
+		{
+			if (i == (int)MAP_SIZE / 2 || j == 0 || j == MAP_SIZE - 1)
+			{
 				map[i][j] = WALL;
 			}
-			else {
+			else
+			{
 				map[i][j] = EMPTY;
 			}
 		}
@@ -226,34 +252,45 @@ void Map_GamemapInitStage2(MapData map[22][22]) {
 	}
 }
 
-// stage 3ÀÇ ¸Ê ¸¸µå´Â ÇÔ¼ö < ½ÊÀÚ º®>
+// stage 3ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ < ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½>
 void Map_GamemapInitStage3(MapData map[22][22]) {
 	int i, j;
-	for (i = 0; i < MAP_SIZE; i++) {
-		for (j = 0; j < MAP_SIZE; j++) {
-			if (i == MAP_SIZE / 2 || j == MAP_SIZE / 2) {
+	for (i = 0; i < MAP_SIZE; i++)
+	{
+		for (j = 0; j < MAP_SIZE; j++)
+		{
+			if (i == MAP_SIZE / 2 || j == MAP_SIZE / 2)
+			{
 				map[i][j] = WALL;
 			}
-			else {
+			else
+			{
 				map[i][j] = EMPTY;
 			}
 		}
 	}
 }
 
-// stage 4ÀÇ ¸Ê ¸¸µå´Â ÇÔ¼ö < Å©·Î½º º®>
+// stage 4ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ < Å©ï¿½Î½ï¿½ ï¿½ï¿½>
 void Map_GamemapInitStage4(MapData map[22][22]) {
 	int i, j;
-	for (i = 0; i < MAP_SIZE; i++) {
-		for (j = 0; j < MAP_SIZE; j++) {
-			if (i == j || i + j == MAP_SIZE - 1) {
+	for (i = 0; i < MAP_SIZE; i++)
+	{
+		for (j = 0; j < MAP_SIZE; j++)
+		{
+			if (i == j || i + j == MAP_SIZE - 1)
+			{
 				if (i == MAP_SIZE / 2 - 1 || i == MAP_SIZE / 2)
+				{
 					map[i][j] = EMPTY;
+				}
 				else
+				{
 					map[i][j] = WALL;
-
+				}
 			}
-			else {
+			else
+			{
 				map[i][j] = EMPTY;
 			}
 		}
@@ -269,14 +306,18 @@ void Map_GamemapDrawWall(MapData map[22][22]) {
 	SetConsoleTextAttribute(hand, 15);
 
 	int i, j;
-	for (i = 0; i < MAP_SIZE; i++) {
-		for (j = 0; j < MAP_SIZE; j++) {
-			if (map[i][j] == WALL) {
+	for (i = 0; i < MAP_SIZE; i++)
+	{
+		for (j = 0; j < MAP_SIZE; j++)
+		{
+			if (map[i][j] == WALL)
+			{
 				gotoxy(i, j);
-				//print ¡á
+				//print ï¿½ï¿½
 				printf("\u25A0");
 			}
-			else if (map[i][j] == EMPTY) {
+			else if (map[i][j] == EMPTY)
+			{
 				gotoxy(i, j);
 				printf(" ");
 			}

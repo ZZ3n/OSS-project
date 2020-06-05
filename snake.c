@@ -4,46 +4,48 @@
 #include "collision.h"
 
 extern const int MAP_SIZE;
-extern const int EMPTY;
+
 extern const int COLLISION;
+
+extern const int EMPTY;
 
 extern const int HEAD;
 extern const int TAIL;
 
-extern const int UP;
-extern const int DOWN;
-extern const int LEFT;
 extern const int RIGHT;
+extern const int LEFT;
+extern const int DOWN;
+extern const int UP;
 
 /*
-ÄÜ¼Ö (x,y) ¿¡ Tail("¡Û") À» ±×¸²
-¸Ê¿¡ ²¿¸®ÀÇ À§Ä¡¸¦ ÀúÀåÇÔ.
+ï¿½Ü¼ï¿½ (x,y) ï¿½ï¿½ Tail("ï¿½ï¿½") ï¿½ï¿½ ï¿½×¸ï¿½
+ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 */
 void Game_PlayDrawTail(MapData map[22][22], int snake_x, int snake_y) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hand, 14);
 	gotoxy(snake_x, snake_y);
-	//print ¡Û
+	//print ï¿½ï¿½
 	printf("\u25CB");
-	map[snake_x][snake_y] = TAIL; // ¸Ê¿¡ ²¿¸®ÀÇ À§Ä¡¸¦ ÀúÀåÇÔ.
+	map[snake_x][snake_y] = TAIL; // ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 	SetConsoleTextAttribute(hand, 7);
 
 }
 
-// ¹ìÀ» x,y À§Ä¡¿¡ ±×¸².
+// ï¿½ï¿½ï¿½ï¿½ x,y ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½×¸ï¿½.
 void Game_PlayDrawHead(MapData map[22][22], int snake_x, int snake_y) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	gotoxy(snake_x, snake_y);
 	SetConsoleTextAttribute(hand, 14);
-	//print ¡Ü
+	//print ï¿½ï¿½
 	printf("\u25CF");
 	SetConsoleTextAttribute(hand, 7);
 	map[snake_x][snake_y] = HEAD;
 }
 
 /*
-x,y¿¡ " "¸¦ ³Ö¾î¼­ ²¿¸®¸¦ ÄÜ¼Ö¿¡¼­ Ãâ·ÂÇÏÁö ¾Ê°Ô ÇÔ.
-map¿¡¼­ x,y ºÎºÐÀ» EMPTY ·Î ÃÊ±âÈ­.
+x,yï¿½ï¿½ " "ï¿½ï¿½ ï¿½Ö¾î¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ü¼Ö¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½ï¿½.
+mapï¿½ï¿½ï¿½ï¿½ x,y ï¿½Îºï¿½ï¿½ï¿½ EMPTY ï¿½ï¿½ ï¿½Ê±ï¿½È­.
 */
 void Game_PlayRemoveTail(MapData map[22][22], int snake_x, int snake_y) {
 	gotoxy(snake_x, snake_y);
@@ -53,20 +55,26 @@ void Game_PlayRemoveTail(MapData map[22][22], int snake_x, int snake_y) {
 
 //get snake x, y and move snake
 int Game_PlayPredictHead(int xy, int way) {
-	if (way == UP || way == LEFT) {
-		if (xy - 1 == -1) {
+	if (way == UP || way == LEFT)
+	{
+		if (xy - 1 == -1)
+		{
 			xy = MAP_SIZE - 1;
 		}
-		else {
+		else
+		{
 			--(xy);
 		}
 		return xy;
 	}
-	if (way == DOWN || way == RIGHT) {
-		if (xy + 1 == MAP_SIZE) {
+	if (way == DOWN || way == RIGHT)
+	{
+		if (xy + 1 == MAP_SIZE)
+		{
 			xy = 0;
 		}
-		else {
+		else
+		{
 			++xy;
 		}
 		return xy;
@@ -76,52 +84,67 @@ int Game_PlayPredictHead(int xy, int way) {
 
 int Game_PlayMoveSnake(MapData map[22][22], SnakePos * snake, int way) {
 	Game_PlayRemoveTail(map, snake->x, snake->y);
-	if (isColWithWall(map, snake, way) == TRUE) {
+
+	if (isColWithWall(map, snake, way) == TRUE)
+	{
 		gotoxy(1, 1);
 		printf("> Hit : wall");
 		return COLLISION;
 	}
-	if (isColWithTail(map, snake, way) == TRUE) {
+	if (isColWithTail(map, snake, way) == TRUE)
+	{
 		gotoxy(1, 1);
 		printf("> Hit : tail");
 		return COLLISION;
 	}
 
-	if (way == UP) {
-		if (snake->y - 1 == -1) {
+	if (way == UP)
+	{
+		if (snake->y - 1 == -1)
+		{
 			snake->y = MAP_SIZE - 1;
 		}
-		else {
+		else
+		{
 			--(snake->y);
 		}
 		Game_PlayDrawHead(map, snake->x, (snake->y));
 		return UP;
 	}
-	if (way == DOWN) {
-		if (snake->y + 1 == MAP_SIZE) {
+	if (way == DOWN)
+	{
+		if (snake->y + 1 == MAP_SIZE)
+		{
 			snake->y = 0;
 		}
-		else {
+		else
+		{
 			++(snake->y);
 		}
 		Game_PlayDrawHead(map, snake->x, (snake->y));
 		return DOWN;
 	}
-	if (way == LEFT) {
-		if (snake->x - 1 == -1) {
+	if (way == LEFT)
+	{
+		if (snake->x - 1 == -1)
+		{
 			snake->x = MAP_SIZE - 1;
 		}
-		else {
+		else
+		{
 			--(snake->x);
 		}
 		Game_PlayDrawHead(map, (snake->x), snake->y);
 		return LEFT;
 	}
-	if (way == RIGHT) {
-		if (snake->x + 1 == MAP_SIZE) {
+	if (way == RIGHT)
+	{
+		if (snake->x + 1 == MAP_SIZE)
+		{
 			snake->x = 0;
 		}
-		else {
+		else
+		{
 			++(snake->x);
 		}
 		Game_PlayDrawHead(map, snake->x, snake->y);

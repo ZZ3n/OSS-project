@@ -2,45 +2,53 @@
 #include "const.h"
 #include "queue.h"
 
-// Å¥ÀÇ rear¿Í front¸¦ ÀüºÎ NULL·Î ÃÊ±âÈ­ÇÔ.
+// Å¥ï¿½ï¿½ rearï¿½ï¿½ frontï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ NULLï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½ï¿½.
 void QueueInit(Queue * pq) {
 	pq->rear = NULL;
 	pq->front = NULL;
 }
 
-int isEmpty(Queue * pq) {
+int isEmpty(Queue * pq)
+{
 	if (pq->front == NULL)
+	{
 		return TRUE;
+	}
 	else
+	{
 		return FALSE;
+	}
 }
 
 void Enqueue(Queue * positionQueue, SnakePos data) {
 	Node * newNode = (Node *)malloc(sizeof(Node));
-	// dataÀÇ À§Ä¡¸¦ ÀúÀå
+	// dataï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	newNode->data = data;
 	newNode->next = NULL;
-	// Å¥¿¡ »ðÀÔÀÌ Ã³À½ÀÎ °æ¿ì.
-	if (positionQueue->front == NULL) {
+	// Å¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+	if (positionQueue->front == NULL)
+	{
 		positionQueue->rear = newNode;
 		positionQueue->front = newNode;
 	}
-	// Å¥ÀÇ µÞºÎºÐ¿¡ ³ëµå Ãß°¡.
-	else {
+	// Å¥ï¿½ï¿½ ï¿½ÞºÎºÐ¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½.
+	else
+	{
 		positionQueue->rear->next = newNode;
 		positionQueue->rear = newNode;
 	}
 }
 
 /*
-Queue* pq´Â Å¥ÀÇ À§Ä¡¸¦ ÂüÁ¶
-SnakePos data ´Â ¹ìÀÇ À§Ä¡
+Queue* pqï¿½ï¿½ Å¥ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+SnakePos data ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
 */
 SnakePos Dequeue(Queue * pq) {
 	Node * deletedNode;
 	SnakePos deletedData = { 0,0 };
 	// Queue Empty Check
-	if (isEmpty(pq)) {
+	if (isEmpty(pq))
+	{
 		return deletedData;
 	}
 	deletedNode = pq->front;
