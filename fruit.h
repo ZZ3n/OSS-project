@@ -1,13 +1,7 @@
 #pragma once
 #include "const.h"
 
-// »ç°úÀÇ x,y ÁÂÇ¥¿Í »ç°ú °¹¼ö
-typedef struct _fruitxy {
-	int x;
-	int y;
-	int numOfFruit;
-} FruitPos;
 
-int Game_DrawFruit(MapData map[MAP_SIZE][MAP_SIZE], FruitPos * fp);
-int Game_DrawSpecial(MapData map[MAP_SIZE][MAP_SIZE], FruitPos * fp);
-int Game_RemoveFruit(MapData map[MAP_SIZE][MAP_SIZE], FruitPos * fp);
+int Game_DrawFruit(MapData map[22][22], FruitPos * fp);
+int Game_DrawSpecial(MapData map[22][22], FruitPos * fp);
+int Game_RemoveFruit(MapData map[22][22], FruitPos * fp);
