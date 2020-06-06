@@ -16,6 +16,8 @@ Draw start menu
 */
 int Map_MenuDrawStart(void) {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
+	int keyDown = 0;
+
 	SetConsoleTextAttribute(hand, 13);
 	gotoxy(DEFAULT_X, DEFAULT_Y);
 	printf("============================================");
@@ -37,10 +39,10 @@ int Map_MenuDrawStart(void) {
 
 	SetConsoleTextAttribute(hand, 14);
 	// Blinking console output
-	while (1)
+	while (keyDown != 't')
 	{
 		// Key input
-		int keyDown = getKeyDown();
+		keyDown = getKeyDown();
 		// Game start
 		if (keyDown == 's' || keyDown == 'S')
 		{
@@ -60,10 +62,11 @@ int Map_MenuDrawStart(void) {
 		printf("-- press 's' to start --");
 		Sleep(1000 / 3);
 		gotoxy(DEFAULT_X + 5, DEFAULT_Y + 9);
-		printf("                         ");
+		printf("                           ");
 		Sleep(1000 / 3);
-	}
 
+	}
+	return FALSE;
 }
 
 /*
@@ -72,7 +75,7 @@ Draw mode menu
 int Map_MenuDrawMode(void)
 {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
-
+	int keyDown = 0;
 	SetConsoleTextAttribute(hand, 11);
 	gotoxy(DEFAULT_X, DEFAULT_Y);
 	printf("============================================");
@@ -90,9 +93,9 @@ int Map_MenuDrawMode(void)
 	gotoxy(DEFAULT_X, DEFAULT_Y + 5);
 	printf(" Time Limit Mode   [%d] ", 2);
 
-	while (1)
+	while (keyDown != '1' && keyDown != '2')
 	{
-		int keyDown = getKeyDown();
+		keyDown = getKeyDown();
 		//Classic mode
 		if (keyDown == '1')
 		{
@@ -123,6 +126,7 @@ int Map_MenuDrawStage(int mode, int * scoreArr) {
 	//Pointer that associated to 'score.txt' 
 	FILE * readfp;
 	int errCode;
+	int keyDown = 0;
 	errCode = fopen_s(&readfp, "score.txt", "r");
 
 	// If doesn't exist "score.txt"
@@ -167,9 +171,9 @@ int Map_MenuDrawStage(int mode, int * scoreArr) {
 	fclose(readfp);
 
 	//Choose stage
-	while (1)
+	while (keyDown < '1' || keyDown > '4')
 	{
-		int keyDown = getKeyDown();
+		keyDown = getKeyDown();
 		if (keyDown == '1')
 		{
 			SetConsoleTextAttribute(hand, 7);

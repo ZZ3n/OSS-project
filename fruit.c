@@ -13,10 +13,11 @@ extern const int COLOR;
 int Game_DrawFruit(MapData map[22][22], FruitPos * fp, int COLOR) {
 	// i,j >0  &&  i,j < MAP_SIZE-1i
 	HANDLE  hand = GetStdHandle(STD_OUTPUT_HANDLE);
-	int i, j;
+	int i=0, j=0;
 
 	srand((unsigned int)time(NULL));
-	while (1) {
+	while (fp->numOfFruit < 1)
+	{
 		i = rand() % (MAP_SIZE - 2) + 1;
 		j = rand() % (MAP_SIZE - 2) + 1;
 

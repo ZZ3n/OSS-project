@@ -192,7 +192,7 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 	Map_GamemapDrawWall(map);
 	Game_PlayDrawHead(map, snakeHead.x, snakeHead.y);
 
-	while (1)
+	while (key != 't')
 	{
 		//Console refresh
 		Sleep(refreshInterval / (DWORD)NORMAL); // 1200 / 10 = 0.12sec
@@ -207,7 +207,6 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 				specialTime = TRUE;
 			}
 		}
-
 		// Draw fruit
 		if (specialTime == TRUE)
 		{

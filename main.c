@@ -18,11 +18,12 @@ int main(void) {
 	int scoreArr[8] = { 0 };
 	int stage;
 	int mode;
+	int keyDown = getKeyDown();
 
 	system("color 7");
 	hidecursor();
 
-	while (1)
+	while (keyDown != 't')
 	{
 		system("mode con: cols=44 lines=30");
 		if (Map_MenuDrawStart() == FALSE)
