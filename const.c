@@ -1,20 +1,20 @@
-#include "const.h"
+#include "basic.h"
 
 const int MAP_SIZE = 22;
 
 /*
-magic number - console letter coutput location
+Magic number - console letter coutput location
 */
 const int DEFAULT_X = 0;
 const int DEFAULT_Y = 0;
 
 /*
-magic number - representation of collision state
+Magic number - representation of collision state
 */
 const int COLLISION = 10;
 
 /*
-magic number - directional key
+Magic number - directional key
 */
 const int RIGHT = 77;
 const int LEFT = 75;
@@ -22,31 +22,36 @@ const int DOWN = 80;
 const int UP = 72;
 
 /*
-magic number - map block state
+Magic number - map block state
 */
 const int FRUIT = 5;
 const int EMPTY = 0;
 const int WALL = 1;
 
 /*
-magic number - snake location information
+Magic number - snake location information
 */
 const int HEAD = 2;
 const int TAIL = 3;
 
 /*
-magic number - fruit item type color
-*/
-const int GREEN = 10;
-const int RED = 12;
-
-/*
-magic number - for SLeep time
+Magic number - for SLeep time
 */
 const int NORMAL = 10;
 
 /*
-already defined in windows.h
+Magic number - console color
+*/
+const int LIGHTGRAY = 7;
+const int LIGHTGREEN = 10;
+const int LIGHTCYAN = 11;
+const int LIGHTRED = 12;
+const int LIGHTMAGENTA = 13;
+const int YELLOW = 14;
+const int WHITE = 15;
+
+/*
+Already defined in windows.h
 const int TRUE = 1;
 const int FALSE = 0;
 */

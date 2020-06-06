@@ -1,5 +1,5 @@
 #pragma once
-#include "const.h"
+#include "basic.h"
 
 void Game_PlayDrawTail(MapData map[22][22], int snake_x, int snake_y);
 void Game_PlayDrawHead(MapData map[22][22], int snake_x, int snake_y);

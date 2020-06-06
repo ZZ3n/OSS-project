@@ -1,14 +1,19 @@
-#pragma once
-#include "const.h"
+
+#include "basic.h"
 #include "queue.h"
 
-// Setting value Null
-void QueueInit(Queue * pq) {
+/* 
+Setting value Null 
+*/
+void QueueInit(Queue * pq) 
+{
 	pq->rear = NULL;
 	pq->front = NULL;
 }
 
-//Queue empty check
+/*
+Queue empty check
+*/
 int isEmpty(Queue * pq)
 {
 	if (pq->front == NULL)
@@ -21,11 +26,15 @@ int isEmpty(Queue * pq)
 	}
 }
 
-//Insert snake body into queue
-void Enqueue(Queue * positionQueue, SnakePos data) {
+/*
+Insert snake body into queue
+*/
+void Enqueue(Queue * positionQueue, SnakePos data) 
+{
 	Node * newNode = (Node *)malloc(sizeof(Node));
 	newNode->data = data;
 	newNode->next = NULL;
+
 	//First enqueue
 	if (positionQueue->front == NULL)
 	{
@@ -43,17 +52,21 @@ void Enqueue(Queue * positionQueue, SnakePos data) {
 /*
 Dequeue snake's tail
 */
-SnakePos Dequeue(Queue * positionQueue) {
+SnakePos Dequeue(Queue * positionQueue) 
+{
 	Node * deletedNode;
 	SnakePos deletedData = { 0,0 };
+
 	// Queue Empty Check
 	if (isEmpty(positionQueue))
 	{
 		return deletedData;
 	}
+
 	deletedNode = positionQueue->front;
 	deletedData = deletedNode->data;
 	positionQueue->front = positionQueue->front->next;
+
 	free(deletedNode);
 	return deletedData;
 }
@@ -61,6 +74,7 @@ SnakePos Dequeue(Queue * positionQueue) {
 /*
 Peek the queue
 */
-SnakePos Peek(Queue * pq) {
+SnakePos Peek(Queue * pq) 
+{
 	return pq->front->data;
 }

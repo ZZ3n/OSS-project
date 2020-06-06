@@ -1,5 +1,5 @@
 #pragma once
-#include "const.h"
+#include "basic.h"
 
 int isColWithTail(MapData map[22][22], SnakePos * snakePos, int way);
 int isColWithWall(MapData map[22][22], SnakePos * sp, int way);

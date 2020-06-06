@@ -5,14 +5,15 @@
 #include <time.h>
 
 #include "collision.h"
-#include "const.h"
+#include "basic.h"
 #include "fruit.h"
 #include "game.h"
 #include "map.h"
 #include "queue.h"
 #include "snake.h"
 
-int main(void) {
+int main(void) 
+{
 	MapData map[22][22];
 
 	int scoreArr[8] = { 0 };
@@ -26,6 +27,7 @@ int main(void) {
 	while (keyDown != 't')
 	{
 		system("mode con: cols=44 lines=30");
+
 		if (Map_MenuDrawStart() == FALSE)
 		{
 			break;

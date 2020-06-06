@@ -1,5 +1,5 @@
 #pragma once
-#include "const.h"
+#include "basic.h"
 #include "map.h"
 #include "game.h"
 
@@ -11,21 +11,28 @@ extern const int DEFAULT_Y;
 extern const int EMPTY;
 extern const int WALL;
 
+extern const int LIGHTMAGENTA;
+extern const int YELLOW;
+extern const int LIGHTCYAN;
+extern const int WHITE;
+extern const int LIGHTGRAY;
+
 /*
 Draw start menu
 */
-int Map_MenuDrawStart(void) {
+int Map_MenuDrawStart(void) 
+{
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	int keyDown = 0;
 
-	SetConsoleTextAttribute(hand, 13);
+	SetConsoleTextAttribute(hand, LIGHTMAGENTA);
 	gotoxy(DEFAULT_X, DEFAULT_Y);
 	printf("============================================");
-	SetConsoleTextAttribute(hand, 14);
+	SetConsoleTextAttribute(hand, YELLOW);
 	printf("================ Snake Game ================");
-	SetConsoleTextAttribute(hand, 11);
+	SetConsoleTextAttribute(hand, LIGHTCYAN);
 	printf("============================================");
-	SetConsoleTextAttribute(hand, 15);
+	SetConsoleTextAttribute(hand, WHITE);
 	gotoxy(DEFAULT_X, DEFAULT_Y + 4);
 	printf("> Key  : up, down, left, right,");
 	gotoxy(DEFAULT_X, DEFAULT_Y + 5);
@@ -36,25 +43,26 @@ int Map_MenuDrawStart(void) {
 	gotoxy(DEFAULT_X + 11, DEFAULT_Y + 15);
 	printf("<BlockDMask@gmail.com>");
 
+	SetConsoleTextAttribute(hand, YELLOW);
 
-	SetConsoleTextAttribute(hand, 14);
 	// Blinking console output
 	while (keyDown != 't')
 	{
 		// Key input
 		keyDown = getKeyDown();
+		SetConsoleTextAttribute(hand, LIGHTGRAY);
+
 		// Game start
 		if (keyDown == 's' || keyDown == 'S')
 		{
-			SetConsoleTextAttribute(hand, 7);
 			return TRUE;
 		}
 		// Game exit
 		if (keyDown == 't' || keyDown == 'T')
 		{
-			SetConsoleTextAttribute(hand, 7);
 			return FALSE;
 		}
+
 		/*
 		Blinking "-- press 's' to start --" 
 		*/
@@ -64,7 +72,6 @@ int Map_MenuDrawStart(void) {
 		gotoxy(DEFAULT_X + 5, DEFAULT_Y + 9);
 		printf("                           ");
 		Sleep(1000 / 3);
-
 	}
 	return FALSE;
 }
@@ -76,17 +83,17 @@ int Map_MenuDrawMode(void)
 {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	int keyDown = 0;
-	SetConsoleTextAttribute(hand, 11);
+
+	SetConsoleTextAttribute(hand, LIGHTCYAN);
 	gotoxy(DEFAULT_X, DEFAULT_Y);
 	printf("============================================");
-	SetConsoleTextAttribute(hand, 14);
+	SetConsoleTextAttribute(hand, YELLOW);
 	gotoxy(DEFAULT_X, DEFAULT_Y + 1);
 	printf("================ CHOOSE MODE ================");
-	SetConsoleTextAttribute(hand, 13);
+	SetConsoleTextAttribute(hand, LIGHTMAGENTA);
 	gotoxy(DEFAULT_X, DEFAULT_Y + 2);
 	printf("============================================");
-	SetConsoleTextAttribute(hand, 15);
-
+	SetConsoleTextAttribute(hand, WHITE);
 
 	gotoxy(DEFAULT_X, DEFAULT_Y + 4);
 	printf(" Classic Mode      [%d] ", 1);
@@ -96,37 +103,42 @@ int Map_MenuDrawMode(void)
 	while (keyDown != '1' && keyDown != '2')
 	{
 		keyDown = getKeyDown();
+		SetConsoleTextAttribute(hand, LIGHTGRAY);
+
 		//Classic mode
 		if (keyDown == '1')
 		{
-			SetConsoleTextAttribute(hand, 7);
 			return 1;
 		}
 		//Time limit mode
 		if (keyDown == '2')
 		{
-			SetConsoleTextAttribute(hand, 7);
 			return 2;
 		}
-		SetConsoleTextAttribute(hand, 14);
+
+		SetConsoleTextAttribute(hand, YELLOW);
 		gotoxy(DEFAULT_X, DEFAULT_Y + 9);
 		printf(">> Choose Mode : 1, 2");
 		Sleep(1000 / 3);
 		gotoxy(DEFAULT_X, DEFAULT_Y + 9);
 		printf(">>                          ");
+
 		Sleep(1000 / 3);
 	}
-
 }
 
 //show stage Menu and score;
-int Map_MenuDrawStage(int mode, int * scoreArr) {
+int Map_MenuDrawStage(int mode, int * scoreArr) 
+{
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
-	int i;
+
 	//Pointer that associated to 'score.txt' 
 	FILE * readfp;
+
+    int keyDown = 0;
+	int i;
+
 	int errCode;
-	int keyDown = 0;
 	errCode = fopen_s(&readfp, "score.txt", "r");
 
 	// If doesn't exist "score.txt"
@@ -137,16 +149,18 @@ int Map_MenuDrawStage(int mode, int * scoreArr) {
 		fclose(readfp);
 		errCode = fopen_s(&readfp, "score.txt", "r");
 	}
-	SetConsoleTextAttribute(hand, 11);
+
+	SetConsoleTextAttribute(hand, LIGHTCYAN);
 	gotoxy(DEFAULT_X, DEFAULT_Y);
 	printf("============================================");
-	SetConsoleTextAttribute(hand, 14);
+	SetConsoleTextAttribute(hand, YELLOW);
 	gotoxy(DEFAULT_X, DEFAULT_Y + 1);
 	printf("================ BEST SCORE ================");
-	SetConsoleTextAttribute(hand, 13);
+	SetConsoleTextAttribute(hand, LIGHTMAGENTA);
 	gotoxy(DEFAULT_X, DEFAULT_Y + 2);
 	printf("============================================");
-	SetConsoleTextAttribute(hand, 15);
+	SetConsoleTextAttribute(hand, WHITE);
+
 	// Read "score.txt"
 	fscanf_s(readfp, "%d %d %d %d %d %d %d %d", &scoreArr[0], &scoreArr[1], &scoreArr[2], &scoreArr[3], &scoreArr[4], &scoreArr[5], &scoreArr[6], &scoreArr[7]);
 
@@ -174,39 +188,41 @@ int Map_MenuDrawStage(int mode, int * scoreArr) {
 	while (keyDown < '1' || keyDown > '4')
 	{
 		keyDown = getKeyDown();
+		SetConsoleTextAttribute(hand, LIGHTGRAY);
+
 		if (keyDown == '1')
 		{
-			SetConsoleTextAttribute(hand, 7);
 			return 1;
 		}
 		if (keyDown == '2')
 		{
-			SetConsoleTextAttribute(hand, 7);
 			return 2;
 		}
 		if (keyDown == '3')
 		{
-			SetConsoleTextAttribute(hand, 7);
 			return 3;
 		}
 		if (keyDown == '4')
 		{
-			SetConsoleTextAttribute(hand, 7);
 			return 4;
 		}
-		SetConsoleTextAttribute(hand, 14);
+
+		SetConsoleTextAttribute(hand, YELLOW);
 		gotoxy(DEFAULT_X, DEFAULT_Y + 9);
 		printf(">> Choose Stage : 1, 2, 3, 4");
 		Sleep(1000 / 3);
 		gotoxy(DEFAULT_X, DEFAULT_Y + 9);
 		printf(">>                          ");
+
 		Sleep(1000 / 3);
 	}
 }
 
 // Stage 1 create and init(Square shape)
-void Map_GamemapInitStage1(MapData map[22][22]) {
+void Map_GamemapInitStage1(MapData map[22][22]) 
+{
 	int i, j;
+
 	for (i = 0; i < MAP_SIZE; i++)
 	{
 		if (i == 0 || i == MAP_SIZE - 1)
@@ -233,8 +249,10 @@ void Map_GamemapInitStage1(MapData map[22][22]) {
 }
 
 // Stage 2 create and init( ][ shape)
-void Map_GamemapInitStage2(MapData map[22][22]) {
+void Map_GamemapInitStage2(MapData map[22][22]) 
+{
 	int i, j;
+
 	for (i = 0; i < MAP_SIZE; i++)
 	{
 		for (j = 0; j < MAP_SIZE; j++)
@@ -253,8 +271,10 @@ void Map_GamemapInitStage2(MapData map[22][22]) {
 }
 
 // Stage 3 create and init(+ shape)
-void Map_GamemapInitStage3(MapData map[22][22]) {
+void Map_GamemapInitStage3(MapData map[22][22]) 
+{
 	int i, j;
+
 	for (i = 0; i < MAP_SIZE; i++)
 	{
 		for (j = 0; j < MAP_SIZE; j++)
@@ -272,8 +292,10 @@ void Map_GamemapInitStage3(MapData map[22][22]) {
 }
 
 // Stage 4 create and init(X shape)
-void Map_GamemapInitStage4(MapData map[22][22]) {
+void Map_GamemapInitStage4(MapData map[22][22]) 
+{
 	int i, j;
+
 	for (i = 0; i < MAP_SIZE; i++)
 	{
 		for (j = 0; j < MAP_SIZE; j++)
@@ -298,11 +320,13 @@ void Map_GamemapInitStage4(MapData map[22][22]) {
 }
 
 //Draw game map
-void Map_GamemapDrawWall(MapData map[22][22]) {
+void Map_GamemapDrawWall(MapData map[22][22]) 
+{
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hand, 15);
-
 	int i, j;
+
+	SetConsoleTextAttribute(hand, WHITE);
+
 	for (i = 0; i < MAP_SIZE; i++)
 	{
 		for (j = 0; j < MAP_SIZE; j++)
@@ -310,7 +334,7 @@ void Map_GamemapDrawWall(MapData map[22][22]) {
 			if (map[i][j] == WALL)
 			{
 				gotoxy(i, j);
-				//print ��
+				//print filled squre
 				printf("\u25A0");
 			}
 			else if (map[i][j] == EMPTY)
@@ -320,12 +344,16 @@ void Map_GamemapDrawWall(MapData map[22][22]) {
 			}
 		}
 	}
-	SetConsoleTextAttribute(hand, 7);
+	SetConsoleTextAttribute(hand, LIGHTGRAY);
 }
 
-void Map_GamemapDrawScoreboard(int score, int best, int stage) {
+/*
+Draw score board
+*/
+void Map_GamemapDrawScoreboard(int score, int best, int stage) 
+{
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hand, 15);
+	SetConsoleTextAttribute(hand, WHITE);
 
 	gotoxy(DEFAULT_X, MAP_SIZE + 1);
 	printf(" Stage[%d] Best Score : %4d", stage, best);
@@ -333,7 +361,5 @@ void Map_GamemapDrawScoreboard(int score, int best, int stage) {
 	printf(" Stage[%d] Your Score : %4d", stage, score);
 	gotoxy(DEFAULT_X + 8, MAP_SIZE + 5);
 	printf("[Exit - 't' / Pause - 'p']\n");
-	SetConsoleTextAttribute(hand, 7);
-
-
+	SetConsoleTextAttribute(hand, LIGHTGRAY);
 }

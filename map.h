@@ -1,5 +1,5 @@
 #pragma once
-#include "const.h"
+#include "basic.h"
 
 int Map_MenuDrawStart(void);
 int Map_MenuDrawMode(void);

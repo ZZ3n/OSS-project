@@ -1,5 +1,5 @@
 #pragma once
-#include "const.h"
+#include "basic.h"
 
 void QueueInit(Queue * pq);
 int isEmpty(Queue * pq);

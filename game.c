@@ -1,6 +1,6 @@
 #pragma once
 #include "collision.h"
-#include "const.h"
+#include "basic.h"
 #include "fruit.h"
 #include "game.h"
 #include "map.h"
@@ -19,16 +19,19 @@ extern const int LEFT;
 extern const int DOWN;
 extern const int UP;
 
-extern const int GREEN;
-extern const int RED;
+extern const int LIGHTGREEN;
+extern const int LIGHTRED;
+extern const int YELLOW;
+extern const int WHITE;
+extern const int LIGHTGRAY;
 
-///////////////////////////////////////////////////////////////////////////
 
 /*
 getKeyDown function is checking keyboard input through _kbhit()
 return value is keyboard input
 */
-int getKeyDown(void) {
+int getKeyDown(void) 
+{
 	if (_kbhit())
 	{
 		return _getch();
@@ -39,7 +42,8 @@ int getKeyDown(void) {
 /*
 Console cursor move to (x,y)
 */
-void gotoxy(int x, int y) {
+void gotoxy(int x, int y) 
+{
 	COORD Pos;
 	Pos.X = (short)(2 * x);
 	Pos.Y = (short)y;
@@ -49,17 +53,20 @@ void gotoxy(int x, int y) {
 /*
 Hide cursor before game start
 */
-void hidecursor(void) {
+void hidecursor(void) 
+{
 	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO info;
 	info.dwSize = 100;
 	info.bVisible = FALSE;
 	SetConsoleCursorInfo(consoleHandle, &info);
 }
+
 /*
 Ignore input key that reverse to peviousKey
 */
-int isOverlap(int previousKey, int key) {
+int isOverlap(int previousKey, int key) 
+{
 	if (previousKey == UP && key == DOWN)
 	{
 			return TRUE;
@@ -83,14 +90,17 @@ int isOverlap(int previousKey, int key) {
 Delete all queue and record best score
 When game ends, call this function
 */
-void Game_GameOver(int mode, int score, int best, Queue *pq, int stage, int * scoreArr) {
+void Game_GameOver(int mode, int score, int best, Queue *pq, int stage, int * scoreArr) 
+{
+
+	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 	FILE * wfp;
 	int errCode;
-	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
+
 	if (mode == 1)
 	{
 		if (score >= best)
-		 {
+		{
 			scoreArr[stage - 1] = score;
 		}
 		else
@@ -100,10 +110,12 @@ void Game_GameOver(int mode, int score, int best, Queue *pq, int stage, int * sc
 	}
 	else
 	{
-		if (score >= best) {
+		if (score >= best) 
+		{
 			scoreArr[stage - 1 + 4] = score;
 		}
-		else {
+		else 
+		{
 			scoreArr[stage - 1 + 4] = best;
 		}
 	}
@@ -112,14 +124,14 @@ void Game_GameOver(int mode, int score, int best, Queue *pq, int stage, int * sc
 	fprintf(wfp, "%d %d %d %d %d %d %d %d", scoreArr[0], scoreArr[1], scoreArr[2], scoreArr[3], scoreArr[4], scoreArr[5], scoreArr[6], scoreArr[7]);
 	fclose(wfp);
 
-	SetConsoleTextAttribute(hand, 14);
+	SetConsoleTextAttribute(hand, YELLOW);
 	gotoxy(MAP_SIZE / 2 - 4, MAP_SIZE / 2 - 5);
 	printf("===<GAME OVER>===\n");
 	gotoxy(MAP_SIZE / 2 - 3, MAP_SIZE / 2 - 3);
 	printf("Your Score : %d\n", score);
 	gotoxy(DEFAULT_X + 8, MAP_SIZE + 5);
 	printf("\n");
-	SetConsoleTextAttribute(hand, 7);
+	SetConsoleTextAttribute(hand, LIGHTGRAY);
 
 	// Delete all queue
 	while (!isEmpty(pq))
@@ -131,7 +143,8 @@ void Game_GameOver(int mode, int score, int best, Queue *pq, int stage, int * sc
 /*
 Main game loop
 */
-void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
+void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) 
+{
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	SnakePos snakeHead = { 22 / 4 - 2, 22 / 4 + 1 };
@@ -147,7 +160,8 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 	int score = 0;
 
 	unsigned int repeatTimes = 0;
-	double wholeTime = 120 * 1000;
+	//120000 = 120sec
+	double wholeTime = 120000;
 
 	double refreshInterval = 1200;
 	int innerTimer = 0;
@@ -195,8 +209,10 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 	while (key != 't')
 	{
 		//Console refresh
-		Sleep(refreshInterval / (DWORD)NORMAL); // 1200 / 10 = 0.12sec
+		// 1200 / 10 = 0.12sec
+		Sleep(refreshInterval / (DWORD)NORMAL); 
 		innerTimer++;
+
 		//Minimal interval => 500
 		if (refreshInterval >= 500)
 		{
@@ -207,6 +223,7 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 				specialTime = TRUE;
 			}
 		}
+
 		// Draw fruit
 		if (specialTime == TRUE)
 		{
@@ -220,7 +237,7 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 					Game_RemoveFruit(map, &fruit);
 				}
 				// Make set special fruit
-				Game_DrawFruit(map, &fruit, RED);
+				Game_DrawFruit(map, &fruit, LIGHTRED);
 				specialFruit = TRUE;
 			}
 			else
@@ -236,14 +253,16 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 
 		if (fruit.numOfFruit == 0)
 		{
-			Game_DrawFruit(map, &fruit, GREEN);
+			Game_DrawFruit(map, &fruit, LIGHTGREEN);
 		}
+
 		Map_GamemapDrawScoreboard(score, bestScore, stage);
 
 		//Checking collision between snake and fruit
 		if (isColWithFruit(&snakeHead, &fruit) == TRUE)
 		{
 			(fruit.numOfFruit)--;
+
 			// INdicates that the tail collides
 			removeTail = FALSE;
 
@@ -324,6 +343,7 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 		{
 			removeTail = TRUE;
 		}
+
 		// Checking collision (wall, tail)
 		if (isCollision(previousKey))
 		{
@@ -334,9 +354,9 @@ void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) {
 		//Time limit mode
 		if (mode == 2)
 		{
-			SetConsoleTextAttribute(hand, 15);
-			gotoxy(DEFAULT_X, DEFAULT_Y + 25);
 			wholeTime = wholeTime - (refreshInterval / 10);
+			SetConsoleTextAttribute(hand, WHITE);
+			gotoxy(DEFAULT_X, DEFAULT_Y + 25);
 			printf("%.1lf", wholeTime / 1000);
 
 			if (wholeTime <= 0.0)

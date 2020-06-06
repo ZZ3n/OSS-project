@@ -1,5 +1,5 @@
 #pragma once
-#include "const.h"
+#include "basic.h"
 #include "collision.h"
 #include "snake.h"
 
@@ -17,7 +17,8 @@ extern const int UP;
 /*
 Checking collision with tail
 */
-int isColWithTail(MapData map[22][22], SnakePos * snakePos, int way) {
+int isColWithTail(MapData map[22][22], SnakePos * snakePos, int way) 
+{
 	if (way == UP)
 	{
 		if (map[snakePos->x][Game_PlayPredictHead(snakePos->y, way)] == TAIL)
@@ -30,7 +31,8 @@ int isColWithTail(MapData map[22][22], SnakePos * snakePos, int way) {
 		if (map[snakePos->x][Game_PlayPredictHead(snakePos->y, way)] == TAIL)
 			return TRUE;
 	}
-	if (way == LEFT) {
+	if (way == LEFT) 
+	{
 		if (map[Game_PlayPredictHead(snakePos->x, way)][snakePos->y] == TAIL)
 		{
 			return TRUE;
@@ -49,7 +51,8 @@ int isColWithTail(MapData map[22][22], SnakePos * snakePos, int way) {
 /*
 Checking collision with wall
 */
-int isColWithWall(MapData map[22][22], SnakePos * sp, int way) {
+int isColWithWall(MapData map[22][22], SnakePos * sp, int way) 
+{
 	if (way == UP)
 	{
 		if (map[sp->x][Game_PlayPredictHead(sp->y, way)] == WALL)
@@ -82,7 +85,8 @@ int isColWithWall(MapData map[22][22], SnakePos * sp, int way) {
 }
 
 // Checking collision with fruit
-int isColWithFruit(SnakePos * sp, FruitPos * fp) {
+int isColWithFruit(SnakePos * sp, FruitPos * fp) 
+{
 	//meet;->x == fp->x
 	if ((sp->x == fp->x) && (sp->y == fp->y))
 	{
@@ -95,7 +99,8 @@ int isColWithFruit(SnakePos * sp, FruitPos * fp) {
 Check collision
 Collision state saved in previousKey
 */
-int isCollision(int previousKey) {
+int isCollision(int previousKey)
+{
 	if (previousKey == COLLISION)
 	{
 		return TRUE;
