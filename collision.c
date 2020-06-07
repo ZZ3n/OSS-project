@@ -15,7 +15,7 @@ extern const int DOWN;
 extern const int UP;
 
 /*
-Checking collision with tail
+Checking collision with tail { 22 = MAP_SIZE }
 */
 int isColWithTail(MapData map[22][22], SnakePos * snakePos, int way) 
 {
@@ -49,7 +49,7 @@ int isColWithTail(MapData map[22][22], SnakePos * snakePos, int way)
 }
 
 /*
-Checking collision with wall
+Checking collision with wall { 22 = MAP_SIZE }
 */
 int isColWithWall(MapData map[22][22], SnakePos * sp, int way) 
 {

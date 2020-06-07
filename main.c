@@ -13,7 +13,8 @@
 #include "snake.h"
 
 int main(void) 
-{
+{   
+	//{ 22 = MAP_SIZE }
 	MapData map[22][22];
 
 	int scoreArr[8] = { 0 };

@@ -141,7 +141,7 @@ void Game_GameOver(int mode, int score, int best, Queue *pq, int stage, int * sc
 }
 
 /*
-Main game loop
+Main game loop{ 22 = MAP_SIZE }
 */
 void Game_Start(MapData map[22][22], int stage, int * scoreArr, int mode) 
 {

@@ -218,7 +218,7 @@ int Map_MenuDrawStage(int mode, int * scoreArr)
 	}
 }
 
-// Stage 1 create and init(Square shape)
+// Stage 1 create and init(Square shape) { 22 = MAP_SIZE }
 void Map_GamemapInitStage1(MapData map[22][22]) 
 {
 	int i, j;
@@ -248,7 +248,7 @@ void Map_GamemapInitStage1(MapData map[22][22])
 	}
 }
 
-// Stage 2 create and init( ][ shape)
+// Stage 2 create and init( ][ shape) { 22 = MAP_SIZE }
 void Map_GamemapInitStage2(MapData map[22][22]) 
 {
 	int i, j;
@@ -270,7 +270,7 @@ void Map_GamemapInitStage2(MapData map[22][22])
 	}
 }
 
-// Stage 3 create and init(+ shape)
+// Stage 3 create and init(+ shape) { 22 = MAP_SIZE }
 void Map_GamemapInitStage3(MapData map[22][22]) 
 {
 	int i, j;
@@ -291,7 +291,7 @@ void Map_GamemapInitStage3(MapData map[22][22])
 	}
 }
 
-// Stage 4 create and init(X shape)
+// Stage 4 create and init(X shape) { 22 = MAP_SIZE }
 void Map_GamemapInitStage4(MapData map[22][22]) 
 {
 	int i, j;
@@ -319,7 +319,7 @@ void Map_GamemapInitStage4(MapData map[22][22])
 	}
 }
 
-//Draw game map
+//Draw game map { 22 = MAP_SIZE }
 void Map_GamemapDrawWall(MapData map[22][22]) 
 {
 	HANDLE hand = GetStdHandle(STD_OUTPUT_HANDLE);
